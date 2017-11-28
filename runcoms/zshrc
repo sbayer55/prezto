@@ -10,4 +10,23 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-# Customize to your needs...
+# Modify Path
+export PATH=$HOME/Library/Python/3.6/bin/:$PATH
+export PATH=$HOME/Library/Python/2.7/bin/:$PATH
+export PATH=/usr/local/lib/python2.7/site-packages/bin:$PATH
+export PATH=/usr/local/Cellar/python3/3.6.2/bin:$PATH
+export PATH=/usr/local/Cellar/python/2.7.13_1/bin:$PATH
+export PATH=$HOME/IdeaProjects/ihm-devops-tools/scripts/:$PATH
+export PATH=$HOME/Desktop/bin:$PATH
+
+export GRADLE_HOME="/usr/local/bin/gradle"
+export JAVA_HOME="/Library/Java/Home"
+export JENKINS_URL="http://x1-jenkins.us-east-1.elasticbeanstalk.com"
+export JENKINS_TOKEN=$(cat ~/.jenkins_token)
+
+alias "aws"="aws --profile ihm"
+alias "dbeaver"="/Applications/DBeaver.app/Contents/MacOS/dbeaver -vmargs -Duser.timezone=UTC"
+alias "cassandra"="cassandra -f"
+alias "inventory_ips"="kubectl get pods --output=json | jq -j '.items | map(select(.metadata.name|startswith(\"ihm-inventory-cassandra\"))) | map({pod: .metadata.name, ip: .status.podIP})'"
+alias "grep"="grep --color=auto"
+alias "reload"="source ~/.zshrc"

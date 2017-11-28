@@ -46,7 +46,7 @@ function prompt_paradox_end_segment {
 }
 
 function prompt_paradox_build_prompt {
-  prompt_paradox_start_segment black default '%(?::%F{red}✘ )%(!:%F{yellow}⚡ :)%(1j:%F{cyan}⚙ :)%F{blue}%n%F{red}@%F{green}%m%f'
+  prompt_paradox_start_segment black default '%(?::%F{red}✘ )%(!:%F{yellow}⚡ :)%(1j:%F{cyan}⚙ :)%F{blue}%n'
   prompt_paradox_start_segment blue black '$_prompt_paradox_pwd'
 
   if [[ -n "$git_info" ]]; then
@@ -104,6 +104,10 @@ function prompt_paradox_preexec {
   _prompt_paradox_start_time="$SECONDS"
 }
 
+function cluster {
+  kubectl config current-context | awk -F'.' '{print $1}'
+}
+
 function prompt_paradox_setup {
   setopt LOCAL_OPTIONS
   unsetopt XTRACE KSH_ARRAYS
@@ -149,7 +153,7 @@ function prompt_paradox_setup {
   PROMPT='
 ${(e)$(prompt_paradox_build_prompt)}
  ${editor_info[keymap]} '
-  RPROMPT='%F{blue}[%F{green}%D{%H:%M:%S}%F{blue}]%f'
+  RPROMPT='%F{blue}[%F{green}$(cluster)%F{blue}]%f'
   SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 }
 
