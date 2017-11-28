@@ -14,20 +14,24 @@ Installation
 Prezto will work with any recent release of Zsh, but the minimum required
 version is 4.3.11.
 
-  1. Clone this repo:
+  1. Install Source Code Pro:
+    Download Link (zip): https://github.com/adobe-fonts/source-code-pro/archive/variable-fonts.zip
+    Install font (Instruction https://github.com/adobe-fonts/source-code-pro#font-installation-instructions)
+
+  2. Clone this repo:
 
      ```console
      git clone https://github.com/sbayer55/prezto.git ~/.zprezto
      ```
 
-  2. Run setup:
+  3. Run setup:
 
      ```console
      cd ~/.zprezto
      ./setup.sh
      ```
 
-  2. Profit
+  4. Profit
 
 ### Troubleshooting
 
@@ -98,6 +102,7 @@ Resources
 ---------
 
 The [Zsh Reference Card][7] and the [zsh-lovers][8] man page are indispensable.
+Source Code Pro: https://github.com/adobe-fonts/source-code-pro
 
 License
 -------

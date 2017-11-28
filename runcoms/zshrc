@@ -21,8 +21,6 @@ export PATH=$HOME/Desktop/bin:$PATH
 
 export GRADLE_HOME="/usr/local/bin/gradle"
 export JAVA_HOME="/Library/Java/Home"
-export JENKINS_URL="http://x1-jenkins.us-east-1.elasticbeanstalk.com"
-export JENKINS_TOKEN=$(cat ~/.jenkins_token)
 
 alias "aws"="aws --profile ihm"
 alias "dbeaver"="/Applications/DBeaver.app/Contents/MacOS/dbeaver -vmargs -Duser.timezone=UTC"
