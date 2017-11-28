@@ -1,3 +1,6 @@
+Steve's Prezto Fork
+===================
+
 Prezto — Instantly Awesome Zsh
 ==============================
 
@@ -11,41 +14,20 @@ Installation
 Prezto will work with any recent release of Zsh, but the minimum required
 version is 4.3.11.
 
-  1. Launch Zsh:
+  1. Clone this repo:
 
      ```console
-     zsh
+     git clone https://github.com/sbayer55/prezto.git ~/.zprezto
      ```
 
-  2. Clone the repository:
+  2. Run setup:
 
      ```console
-     git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+     cd ~/.zprezto
+     ./setup.sh
      ```
 
-  3. Create a new Zsh configuration by copying the Zsh configuration files
-     provided:
-
-     ```sh
-     setopt EXTENDED_GLOB
-     for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do
-       ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
-     done
-     ```
-
-     Note: If you already have any of the given config files, ln will error. In
-     simple cases you can add `source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"` to
-     the bottom of your `.zshrc` to load prezto but keep your config intact. For
-     more complicated setups, it is recommended that you back up your original
-     configs and replace them with the provided prezto runcoms.
-
-  4. Set Zsh as your default shell:
-
-     ```console
-     chsh -s /bin/zsh
-     ```
-
-  5. Open a new Zsh terminal window or tab.
+  2. Profit
 
 ### Troubleshooting
 
@@ -82,6 +64,7 @@ accompanying README files to learn of what is available.
      window or tab.
 
 ### Themes
+*Note*: Only the paradox theme has been enhanced for use with kubectl
 
   1. For a list of themes, type `prompt -l`.
   2. To preview a theme, type `prompt -p name`.
@@ -121,11 +104,12 @@ License
 
 This project is licensed under the MIT License.
 
-[1]: http://www.zsh.org
-[2]: http://i.imgur.com/nrGV6pg.png "sorin theme"
-[3]: http://git-scm.com
-[4]: https://github.com
-[5]: http://gitimmersion.com
-[6]: http://gitref.org
-[7]: http://www.bash2zsh.com/zsh_refcard/refcard.pdf
-[8]: http://grml.org/zsh/zsh-lovers.html
+[1]: https://github.com/sorin-ionescu/prezto
+[2]: http://www.zsh.org
+[3]: http://i.imgur.com/nrGV6pg.png "sorin theme"
+[4]: http://git-scm.com
+[5]: https://github.com
+[6]: http://gitimmersion.com
+[7]: http://gitref.org
+[8]: http://www.bash2zsh.com/zsh_refcard/refcard.pdf
+[9]: http://grml.org/zsh/zsh-lovers.html
