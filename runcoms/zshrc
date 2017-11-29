@@ -13,9 +13,10 @@ fi
 # Modify Path
 export PATH=$HOME/Library/Python/3.6/bin/:$PATH
 export PATH=$HOME/Library/Python/2.7/bin/:$PATH
+# export PATH="/usr/local/opt/python/libexec/bin:$PATH"
 export PATH=/usr/local/lib/python2.7/site-packages/bin:$PATH
-export PATH=/usr/local/Cellar/python3/3.6.2/bin:$PATH
 export PATH=/usr/local/Cellar/python/2.7.13_1/bin:$PATH
+export PATH=/usr/local/Cellar/python3/3.6.2/bin:$PATH
 export PATH=$HOME/IdeaProjects/ihm-devops-tools/scripts/:$PATH
 export PATH=$HOME/Desktop/bin:$PATH
 
@@ -28,3 +29,8 @@ alias "cassandra"="cassandra -f"
 alias "inventory_ips"="kubectl get pods --output=json | jq -j '.items | map(select(.metadata.name|startswith(\"ihm-inventory-cassandra\"))) | map({pod: .metadata.name, ip: .status.podIP})'"
 alias "grep"="grep --color=auto"
 alias "reload"="source ~/.zshrc"
+
+alias "env-ci"="awslogin.py --profile=0 && echo ci | setup-kube-localenv.sh"
+alias "env-perf"="awslogin.py --profile=0 && echo perf | setup-kube-localenv.sh"
+alias "env-stg"="awslogin.py --profile=0 && echo stg | setup-kube-localenv.sh"
+alias "env-prod"="awslogin.py --profile=0 && echo prod | setup-kube-localenv.sh"
