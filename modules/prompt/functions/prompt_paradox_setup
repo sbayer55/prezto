@@ -105,7 +105,7 @@ function prompt_paradox_preexec {
 }
 
 function cluster {
-  kubectl config current-context | awk -F'.' '{print $1}'
+  kubectl config current-context 2> /dev/null | awk -F'.' '{print $1}'
 }
 
 function prompt_paradox_setup {
