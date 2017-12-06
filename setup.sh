@@ -11,6 +11,9 @@ if [ "$(pwd)" != "$(echo ~$USER)/.zprezto" ]; then
     exit 1
 fi
 
+echo "Install submodule"
+git submodule update --init --recursive
+
 chsh -s /bin/zsh
 
 # Link runcoms
