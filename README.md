@@ -24,21 +24,14 @@ version is 4.3.11.
      git clone https://github.com/sbayer55/prezto.git ~/.zprezto
      ```
 
-  3. Install dependancies:
-    
-    ```console
-    cd ~/.zprezto
-    git submodule update --init --recursive
-    ```
-
-  4. Run setup:
+  3. Run setup:
 
      ```console
      cd ~/.zprezto
      ./setup.sh
      ```
 
-  5. Profit
+  4. Profit
 
 ### Troubleshooting
 
