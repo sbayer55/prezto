@@ -2,6 +2,9 @@
 
 set -x
 
+HOME=~$USER
+ZPREZTO_HOME=${HOME}/.zprezto
+
 # Check user dir
 if [ "$(pwd)" != "$(echo ~$USER)/.zprezto" ]; then
     echo "You must download Steves repo in ~/.zprezto"
@@ -9,9 +12,6 @@ if [ "$(pwd)" != "$(echo ~$USER)/.zprezto" ]; then
 fi
 
 chsh -s /bin/zsh
-
-HOME=~$USER
-ZPREZTO_HOME=${HOME}/.zprezto
 
 # Link runcoms
 rm -f ${HOME}/.zlogin
@@ -26,3 +26,14 @@ ln -s ${ZPREZTO_HOME}/runcoms/zpreztorc ${HOME}/.zpreztorc
 ln -s ${ZPREZTO_HOME}/runcoms/zprofile ${HOME}/.zprofile
 ln -s ${ZPREZTO_HOME}/runcoms/zshenv ${HOME}/.zshenv
 ln -s ${ZPREZTO_HOME}/runcoms/zshrc ${HOME}/.zshrc
+
+echo "Install VIM profile? (yes/no [yes])"
+read input
+
+if [[ "x${input}" == "x" ]]; then
+    input="yes"
+fi
+
+if [[ "${input}" == "yes" ]]; then
+    cp -rfn ${ZPREZTO_HOME}/vim/ ${HOME}/
+fi
