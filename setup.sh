@@ -38,5 +38,5 @@ if [[ "x${input}" == "x" ]]; then
 fi
 
 if [[ "${input}" == "yes" ]]; then
-    cp -rfn ${ZPREZTO_HOME}/vim/ ${HOME}/
+    echo "There would be setup here"
 fi
