@@ -38,5 +38,6 @@ if [[ "x${input}" == "x" ]]; then
 fi
 
 if [[ "${input}" == "yes" ]]; then
-    cp -rfn ${ZPREZTO_HOME}/vim/ ${HOME}/
+    cv ${ZPREZTO_HOME}/vim
+    ./vim_setup.sh
 fi
