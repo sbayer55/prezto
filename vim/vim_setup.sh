@@ -3,19 +3,19 @@
 HOME=~$USER
 ZPREZTO_HOME=${HOME}/.zprezto
 
+echo "Removing existing vim install"
+sudo apt remove -y vim vim-runtime gvim vim-tiny vim-common \
+    vim-gui-common vim-nox
+
+rm -rf "${HOME}/.vim" "${HOME}/vim"
+rm -f "${HOME}/.vim*"
+
 echo "Install prerequisite"
 sudo apt install -y libncurses5-dev libgnome2-dev libgnomeui-dev \
     libgtk2.0-dev libatk1.0-dev libbonoboui2-dev \
     libcairo2-dev libx11-dev libxpm-dev libxt-dev python-dev \
     python3-dev ruby-dev lua5.1 lua5.1-dev libperl-dev git \
     checkinstall
-
-echo "Removing existing vim install"
-sudo apt remove -y vim vim-runtime gvim vim-tiny vim-common \
-    vim-gui-common vim-nox
-
-rm -rf "${HOME}/.vim"
-rm -f "${HOME}/.vim*"
 
 cd ${HOME}
 
@@ -42,7 +42,12 @@ echo "Comfigure Vim"
 
 echo "Make Vim"
 make VIMRUNTIMEDIR=/usr/local/share/vim/vim80
-sudo checkinstall
+
+if [[ "$(which checkinstall)" = "checkinstall not found" ]]; then
+	sudo make install
+else
+	sudo checkinstall
+fi
 
 sudo update-alternatives --install /usr/bin/editor editor /usr/bin/vim 1
 sudo update-alternatives --set editor /usr/bin/vim
