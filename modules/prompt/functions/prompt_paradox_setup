@@ -104,8 +104,9 @@ function prompt_paradox_preexec {
   _prompt_paradox_start_time="$SECONDS"
 }
 
-function cluster {
-  kubectl config current-context 2> /dev/null | awk -F'.' '{print $1}'
+function get_java_version {
+  java_dir=($(echo "$JAVA_HOME" | tr / " "))
+  print -n "${java_dir[6]}"
 }
 
 function prompt_paradox_setup {
@@ -153,7 +154,8 @@ function prompt_paradox_setup {
   PROMPT='
 ${(e)$(prompt_paradox_build_prompt)}
  ${editor_info[keymap]} '
-  RPROMPT='%F{blue}[%F{green}$(cluster)%F{blue}]%f'
+  # RPROMPT='%F{blue}[%F{green}%D{%H:%M:%S}%F{blue}]%f'
+  RPROMPT='%F{blue}[%F{green}$(get_java_version)%F{blue}]%f'
   SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 }
 

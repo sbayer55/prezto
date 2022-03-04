@@ -1,40 +1,27 @@
-#
-# Executes commands at the start of an interactive session.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
-
 # Source Prezto.
+
+# Profile Prezto startup. Use "zprof" to print results.
+# zmodload zsh/zprof
+
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+    source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-# Modify Path
-export PATH=$HOME/Library/Python/3.6/bin/:$PATH
-export PATH=$HOME/Library/Python/2.7/bin/:$PATH
-# export PATH="/usr/local/opt/python/libexec/bin:$PATH"
-# export PATH=/usr/local/lib/python2.7/site-packages/bin:$PATH
-# export PATH=/usr/local/Cellar/python/2.7.13_1/bin:$PATH
-# export PATH=/usr/local/Cellar/python3/3.6.2/bin:$PATH
-export PATH=$HOME/IdeaProjects/ihm-devops-tools/scripts/:$PATH
-export PATH=$HOME/Desktop/bin:$PATH
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc" ]]; then
+    source "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc"
+fi
 
-export GRADLE_HOME="/usr/local/bin/gradle"
-export JAVA_HOME="/Library/Java/Home"
+export JAVA_HOME="/Users/smbayer/Library/Java/JavaVirtualMachines/jdk-14.0.1/Contents/Home"
+export PATH=$HOME/code/bin:$HOME/.toolbox/bin:$PATH
+export EDITOR=vim
+export VISUAL=vim
 
-alias "aws"="aws --profile ihm"
-alias "dbeaver"="/Applications/DBeaver.app/Contents/MacOS/dbeaver -vmargs -Duser.timezone=UTC"
-alias "cassandra"="cassandra -f"
-alias "inventory_ips"="kubectl get pods --output=json | jq -j '.items | map(select(.metadata.name|startswith(\"ihm-inventory-cassandra\"))) | map({pod: .metadata.name, ip: .status.podIP})'"
 alias "grep"="grep --color=auto"
 alias "reload"="source ~/.zshrc"
-
-alias "env-ci"="awslogin.py --profile=0 && echo ci | setup-kube-localenv.sh"
-alias "env-perf"="awslogin.py --profile=0 && echo perf | setup-kube-localenv.sh"
-alias "env-stg"="awslogin.py --profile=0 && echo stg | setup-kube-localenv.sh"
-alias "env-prod"="awslogin.py --profile=0 && echo prod | setup-kube-localenv.sh"
-alias "nuke"="git reset HEAD --hard"
+alias "refresh"="source ~/.zshrc"
+alias "java-version"="source $HOME/code/bin/java-version.sh"
+# alias "rm-containers"="docker rm $(docker ps --filter status=exited -q)"
+alias "rm-images"="docker images | awk 'NR!=1' | awk '{ print \$3 }' | xargs docker image rm"
 
 alias "ll"="ls -la"
 alias "la"="ls -a"
@@ -43,3 +30,52 @@ alias "k"="kubectl"
 alias "kgp"="kubectl get pods"
 alias "kpf"="kubectl port-forward"
 alias "kl"="kubectl logs"
+alias "git commit"="git commit -s"
+alias "echo"="echo -e"
+alias "beep"="echo -ne '\\007'"
+
+
+function tmux-help () {
+    echo "tmux"
+    echo "tmux ls"
+    echo "tmux attach -d -t <session id>"
+    echo "To split a tmux session vertically <ctrl> + b, %"
+    echo "To split a tmux session horizontally <ctrl> + b, \""
+    echo "To move between panels use <ctrl> + b, <any arrow>"
+}
+
+# Danger Alias
+alias "python"="python3"
+alias "dc"="docker-compose"
+
+export DATA_PREPPER_HOME="/Users/smbayer/.config/data-prepper"
+export DATA_PREPPER_PIPELINE_YAML="${DATA_PREPPER_HOME}/pipeline.yaml"
+export DATA_PREPPER_CONFIG_YAML="${DATA_PREPPER_HOME}/data-prepper-config.yaml"
+
+function data-prepper-docker () {
+    docker run \
+        --name data-prepper \
+        --rm \
+        -p 4900:4900 \
+        -v /Users/smbayer/.config/data-prepper/pipeline.yaml:/usr/share/data-prepper/pipeline.yaml \
+        -v /Users/smbayer/.config/data-prepper/data-prepper-config.yaml:/usr/share/data-prepper/data-prepper-config.yaml \
+        --env ENV_PIPELINE_FILEPATH=/usr/share/data-prepper/pipeline.yaml \
+        opensearchproject/data-prepper:latest
+}
+
+function dc-restart () {
+    local WORKER=$1
+    echo "Restarting worker ${WORKER}"
+    docker-compose stop ${WORKER}
+    docker-compose build ${WORKER}
+    docker-compose up --no-start ${WORKER}
+    docker-compose start ${WORKER}
+}
+
+function nvm-init () {
+export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+}
+
+export PATH="/usr/local/opt/curl/bin:$PATH"
