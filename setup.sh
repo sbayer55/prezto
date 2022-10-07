@@ -30,14 +30,14 @@ ln -s ${ZPREZTO_HOME}/runcoms/zprofile ${HOME}/.zprofile
 ln -s ${ZPREZTO_HOME}/runcoms/zshenv ${HOME}/.zshenv
 ln -s ${ZPREZTO_HOME}/runcoms/zshrc ${HOME}/.zshrc
 
-echo "Install VIM profile? (yes/no [yes])"
-read input
+# echo "Install VIM profile? (yes/no [yes])"
+# read input
 
-if [[ "x${input}" == "x" ]]; then
-    input="yes"
-fi
+# if [[ "x${input}" == "x" ]]; then
+#     input="yes"
+# fi
 
-if [[ "${input}" == "yes" ]]; then
-    cv ${ZPREZTO_HOME}/vim
-    ./vim_setup.sh
-fi
+# if [[ "${input}" == "yes" ]]; then
+#     cv ${ZPREZTO_HOME}/vim
+#     ./vim_setup.sh
+# fi
