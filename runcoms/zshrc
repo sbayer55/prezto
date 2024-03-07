@@ -11,7 +11,7 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc" ]]; then
     source "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc"
 fi
 
-export JAVA_HOME="/Users/smbayer/Library/Java/JavaVirtualMachines/jdk-14.0.1/Contents/Home"
+export JAVA_HOME="$HOME/Library/Java/JavaVirtualMachines/jdk-14.0.1/Contents/Home"
 export PATH=$HOME/code/bin:$HOME/.toolbox/bin:$PATH
 export EDITOR=vim
 export VISUAL=vim
@@ -79,3 +79,26 @@ export NVM_DIR="$HOME/.nvm"
 }
 
 export PATH="/usr/local/opt/curl/bin:$PATH"
+export PATH="/opt/homebrew/opt/python@3.9/libexec/bin:$PATH"
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/stevenbayer/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/stevenbayer/miniforge3/etc/profile.d/conda.sh" ]; then
+        . "/Users/stevenbayer/miniforge3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/stevenbayer/miniforge3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+eval "$(zoxide init zsh --cmd 'cd')"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+[[ -s /Users/stevenbayer/.autojump/etc/profile.d/autojump.sh ]] && source /Users/stevenbayer/.autojump/etc/profile.d/autojump.sh
+autoload -U compinit && compinit -u
+

@@ -11,6 +11,8 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'jistr/vim-nerdtree-tabs'
 Plugin 'kien/ctrlp.vim' 
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 
 "code folding
 Plugin 'tmhedberg/SimpylFold'
@@ -85,3 +87,8 @@ autocmd FileType javascript setlocal shiftwidth=4 tabstop=4
 autocmd FileType yaml setlocal shiftwidth=4 tabstop=4
 
 set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab
+
+" Bind indent and unindent
+nnoremap <Tab> >>
+nnoremap <S-Tab> <<
+
