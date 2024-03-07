@@ -11,8 +11,14 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc" ]]; then
     source "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc"
 fi
 
+<<<<<<< Updated upstream
 export JAVA_HOME="$HOME/Library/Java/JavaVirtualMachines/jdk-14.0.1/Contents/Home"
 export PATH=$HOME/code/bin:$HOME/.toolbox/bin:$PATH
+=======
+# export JAVA_HOME="/Users/smbayer/Library/Java/JavaVirtualMachines/jdk-14.0.1/Contents/Home"
+# export JAVA_HOME="/Users/smbayer/Library/Java/JavaVirtualMachines/corretto-17.0.10/Contents/Home"
+export PATH="$HOME/code/bin:$HOME/Library/Application Support/JetBrains/Toolbox/scripts:/opt/homebrew/bin:$PATH"
+>>>>>>> Stashed changes
 export EDITOR=vim
 export VISUAL=vim
 
@@ -22,6 +28,7 @@ alias "refresh"="source ~/.zshrc"
 alias "java-version"="source $HOME/code/bin/java-version.sh"
 # alias "rm-containers"="docker rm $(docker ps --filter status=exited -q)"
 alias "rm-images"="docker images | awk 'NR!=1' | awk '{ print \$3 }' | xargs docker image rm"
+alias "cd-scratches"="cd '${SCRATCHES}'"
 
 alias "ll"="ls -la"
 alias "la"="ls -a"
@@ -52,18 +59,7 @@ export DATA_PREPPER_HOME="/Users/smbayer/.config/data-prepper"
 export DATA_PREPPER_PIPELINE_YAML="${DATA_PREPPER_HOME}/pipeline.yaml"
 export DATA_PREPPER_CONFIG_YAML="${DATA_PREPPER_HOME}/data-prepper-config.yaml"
 
-function data-prepper-docker () {
-    docker run \
-        --name data-prepper \
-        --rm \
-        -p 4900:4900 \
-        -v /Users/smbayer/.config/data-prepper/pipeline.yaml:/usr/share/data-prepper/pipeline.yaml \
-        -v /Users/smbayer/.config/data-prepper/data-prepper-config.yaml:/usr/share/data-prepper/data-prepper-config.yaml \
-        --env ENV_PIPELINE_FILEPATH=/usr/share/data-prepper/pipeline.yaml \
-        opensearchproject/data-prepper:latest
-}
-
-function dc-restart () {
+function docker-compose-restart () {
     local WORKER=$1
     echo "Restarting worker ${WORKER}"
     docker-compose stop ${WORKER}
@@ -73,32 +69,35 @@ function dc-restart () {
 }
 
 function nvm-init () {
-export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 }
 
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="/opt/homebrew/opt/python@3.9/libexec/bin:$PATH"
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/stevenbayer/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/stevenbayer/miniforge3/etc/profile.d/conda.sh" ]; then
-        . "/Users/stevenbayer/miniforge3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/stevenbayer/miniforge3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+export NVM_DIR="$HOME/.nvm"
+export AWS_DEFAULT_REGION="us-west-2"
+export AWS_REGION="us-west-2"
 
-eval "$(zoxide init zsh --cmd 'cd')"
+alias "git-log"="git log --pretty=oneline"
+alias "git-diff"="git diff --color-words"
+alias "git-file-diff"="git diff --no-index"
+# git-file-diff ./befroe.json ./after.json
+alias "git-diff-staged"="git diff --staged"
+# git-diff-staged origin/mainline ./rails-root/app/models/user.rb
+alias "git-diff-search"="git diff --color-words --word-diff-regex"
+# git-diff-search '[a-z]*'
+alias "git-blame"="git blame --color-lines --color-by-age"
+alias "git-graph"="git log --oneline --decorate --all --graph"
+
+eval "$(zoxide init --cmd 'cd' zsh)"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-[[ -s /Users/stevenbayer/.autojump/etc/profile.d/autojump.sh ]] && source /Users/stevenbayer/.autojump/etc/profile.d/autojump.sh
+[[ -s "${HOME}/.autojump/etc/profile.d/autojump.sh" ]] && source "${HOME}/.autojump/etc/profile.d/autojump.sh"
 autoload -U compinit && compinit -u
 
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+>>>>>>> Stashed changes

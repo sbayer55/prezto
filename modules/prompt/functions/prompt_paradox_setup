@@ -45,8 +45,17 @@ function prompt_paradox_end_segment {
   _prompt_paradox_current_bg=''
 }
 
+function has_aws_access_var {
+   if (( ${+AWS_ACCESS_KEY_ID} ))
+   then
+     print -n " "
+   fi
+  # print ""
+}
+
 function prompt_paradox_build_prompt {
-  prompt_paradox_start_segment black default '%(?::%F{red}✘ )%(!:%F{yellow}⚡ :)%(1j:%F{cyan}⚙ :)%F{blue}%n'
+#  prompt_paradox_start_segment black default '%(?::%F{red}✘ )%(!:%F{yellow}⚡ :)%(1j:%F{cyan}⚙ :)%F{blue}%n$(has_aws_access_var)'
+  prompt_paradox_start_segment black default '%(?::%F{red}✘ )%(!:%F{yellow}⚡ :)%(1j:%F{cyan}⚙ :)%F{blue}'
   prompt_paradox_start_segment blue black '$_prompt_paradox_pwd'
 
   if [[ -n "$git_info" ]]; then
@@ -105,8 +114,53 @@ function prompt_paradox_preexec {
 }
 
 function get_java_version {
-  java_dir=($(echo "$JAVA_HOME" | tr / " "))
-  print -n "${java_dir[6]}"
+  if [[ -f ./gradlew || -f ./build.xml || -f ./pom.xml ]]
+  then
+    java_dir=($(echo "$JAVA_HOME" | tr / " "))
+    print -n "%F{green}${java_dir[6]}%f"
+  fi
+}
+
+function get_node_version {
+  if [[ -f ./package.json ]]
+  then
+    if type "nvm" &> /dev/null
+    then
+      node_version=($(nvm current))
+      print -n "%F{magenta}${node_version}%f"
+    else
+      print -n "%F{red}nvm_missing%f"
+    fi
+  fi
+}
+
+function get_python_version {
+  if test -n "$(find ./ -maxdepth 1 -name '*.py' -print -quit)"
+  then
+    python_version=($(/usr/local/bin/python3 --version | tr / " "))
+    print -n "%F{yellow}${python_version[2]}%f"
+  fi
+}
+
+function join_by {
+  if [ $# -gt 1 ]
+  then
+    local d=${1-} f=${2-}
+    if shift 2
+    then
+      printf %s "$f" "${@/#/$d}"
+    fi
+  fi
+}
+
+function get_rprompt {
+  # builder=($(get_java_version) $(get_node_version) $(get_python_version))
+  # delimiter=$(print -n " %F{blue}|%f ")
+  builder=$(join_by " %F{blue}|%f " $(get_java_version) $(get_node_version) $(get_python_version))
+  if [[ ! -z "${builder}" ]]
+  then
+    print -n "%F{blue}[%f ${builder} %F{blue}]%f"
+  fi
 }
 
 function prompt_paradox_setup {
@@ -155,7 +209,8 @@ function prompt_paradox_setup {
 ${(e)$(prompt_paradox_build_prompt)}
  ${editor_info[keymap]} '
   # RPROMPT='%F{blue}[%F{green}%D{%H:%M:%S}%F{blue}]%f'
-  RPROMPT='%F{blue}[%F{green}$(get_java_version)%F{blue}]%f'
+  # Custom:
+  # RPROMPT='$(get_rprompt)'
   SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 }
 

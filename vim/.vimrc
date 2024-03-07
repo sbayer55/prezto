@@ -9,6 +9,8 @@ Plugin 'VundleVim/Vundle.vim'
 
 "filesystem
 Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/nerdcommenter'
+
 Plugin 'jistr/vim-nerdtree-tabs'
 Plugin 'kien/ctrlp.vim' 
 Plugin 'vim-airline/vim-airline'
@@ -19,6 +21,11 @@ Plugin 'tmhedberg/SimpylFold'
 
 "Colors!!!
 Plugin 'joshdick/onedark.vim'
+
+Plugin 'preservim/tagbar'
+Plugin 'chrisbra/csv.vim'
+
+Plugin 'mbbill/undotree'
 
 call vundle#end()
 
@@ -88,7 +95,23 @@ autocmd FileType yaml setlocal shiftwidth=4 tabstop=4
 
 set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab
 
-" Bind indent and unindent
+let g:airline_theme='onedark'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ''
+let g:airline#extensions#tabline#left_alt_sep = '|'
+
+" Indent keybinds
+" Normal Mode
 nnoremap <Tab> >>
 nnoremap <S-Tab> <<
+" Insert Mode
+inoremap <Tab> <C-t>
+inoremap <S-Tab> <C-d>
+
+" Undotree
+nnoremap <F5> :UndotreeToggle<CR>
+
+" nnoremap <Alt-Left> <b>
+" nnoremap <Alt-q> <b>
+" nnoremap <Alt-Right> <w>
 
