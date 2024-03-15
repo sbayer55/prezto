@@ -3,6 +3,28 @@
 # Profile Prezto startup. Use "zprof" to print results.
 # zmodload zsh/zprof
 
+# Prefix PATH
+export PATH="$HOME/code/bin/commands:${PATH}"
+export PATH="$HOME/code/bin/tools:${PATH}"
+export PATH="$HOME/code/bin:${PATH}"
+export PATH="$HOME/Library/Application Support/JetBrains/Toolbox/scripts:${PATH}"
+export PATH="/opt/homebrew/bin:${PATH}"
+export PATH="/usr/local/opt/curl/bin:$PATH" 
+export PATH="${HOME}/.local/bin:${PATH}"
+
+# Suffix PATH
+export PATH="$PATH:$HOME/.toolbox/bin"
+export PATH="$PATH:$HOME/.rvm/bin"
+
+if [[ -s "/opt/homebrew/opt/python@3.12/bin/python3" ]]; then
+    export PATH="/opt/homebrew/opt/python@3.12/bin:$PATH"
+    alias "python3"="/opt/homebrew/opt/python@3.12/bin/python"
+elif [[ -s "/opt/python3/bin/python3" ]]; then
+    export PATH="/opt/python3/bin:$PATH"
+    alias "python3"="/opt/python3/bin/python3"
+    alias "python"="/opt/python3/bin/python3"
+fi
+
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
     source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
@@ -11,14 +33,22 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc" ]]; then
     source "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc"
 fi
 
-<<<<<<< Updated upstream
-export JAVA_HOME="$HOME/Library/Java/JavaVirtualMachines/jdk-14.0.1/Contents/Home"
-export PATH=$HOME/code/bin:$HOME/.toolbox/bin:$PATH
-=======
-# export JAVA_HOME="/Users/smbayer/Library/Java/JavaVirtualMachines/jdk-14.0.1/Contents/Home"
-# export JAVA_HOME="/Users/smbayer/Library/Java/JavaVirtualMachines/corretto-17.0.10/Contents/Home"
-export PATH="$HOME/code/bin:$HOME/Library/Application Support/JetBrains/Toolbox/scripts:/opt/homebrew/bin:$PATH"
->>>>>>> Stashed changes
+# Java 21
+if [[ -s "$HOME/.jdks/corretto-21.0.2/bin/java" ]]; then
+    export JAVA_HOME="$HOME/.jdks/corretto-21.0.2/bin"
+    export PATH="$HOME/.jdks/corretto-21.0.2/bin:$PATH"
+fi
+
+# Maven
+if [[ -s "/home/smbayer/apache-maven-3.9.6/bin/mvn" ]]; then
+    export PATH="/home/smbayer/apache-maven-3.9.6/bin:$PATH"
+fi
+
+# Ruby 2.7
+if [[ -s "/usr/local/opt/ruby@2.7/bin:$HOME/.toolbox/bin" ]]; then
+    export PATH="/usr/local/opt/ruby@2.7/bin:$HOME/.toolbox/bin:$PATH"
+fi
+
 export EDITOR=vim
 export VISUAL=vim
 
@@ -30,14 +60,13 @@ alias "java-version"="source $HOME/code/bin/java-version.sh"
 alias "rm-images"="docker images | awk 'NR!=1' | awk '{ print \$3 }' | xargs docker image rm"
 alias "cd-scratches"="cd '${SCRATCHES}'"
 
-alias "ll"="ls -la"
-alias "la"="ls -a"
+alias "ls"="ls -Alh --color=auto"
+alias "ll"="ls -Alh --color=auto"
 alias "lf"="ls -la | grep --color=auto"
 alias "k"="kubectl"
 alias "kgp"="kubectl get pods"
 alias "kpf"="kubectl port-forward"
 alias "kl"="kubectl logs"
-alias "git commit"="git commit -s"
 alias "echo"="echo -e"
 alias "beep"="echo -ne '\\007'"
 
@@ -74,9 +103,6 @@ function nvm-init () {
     [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 }
 
-export PATH="/usr/local/opt/curl/bin:$PATH"
-export PATH="/opt/homebrew/opt/python@3.9/libexec/bin:$PATH"
-
 export NVM_DIR="$HOME/.nvm"
 export AWS_DEFAULT_REGION="us-west-2"
 export AWS_REGION="us-west-2"
@@ -98,6 +124,3 @@ eval "$(zoxide init --cmd 'cd' zsh)"
 [[ -s "${HOME}/.autojump/etc/profile.d/autojump.sh" ]] && source "${HOME}/.autojump/etc/profile.d/autojump.sh"
 autoload -U compinit && compinit -u
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
->>>>>>> Stashed changes

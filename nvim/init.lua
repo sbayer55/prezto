@@ -11,7 +11,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.g.mapleader = " "
+-- vim.g.mapleader = "\\"
 
 -- require("lazy").setup(plugins, opts)
 
@@ -20,7 +20,14 @@ require("lazy").setup({
   "folke/which-key.nvim",
   { "folke/neoconf.nvim", cmd = "Neoconf" },
   "folke/neodev.nvim",
+  --{
+  --  "georgewfraser/java-language-server",
+  --  config = function()
+  --    require("java-language-server").setup()
+  --  end
+  --},
   "williamboman/mason.nvim",
+  "williamboman/mason-lspconfig.nvim",
   'neovim/nvim-lspconfig',
   'ms-jpq/coq_nvim',
   "hedyhli/outline.nvim",
@@ -28,7 +35,23 @@ require("lazy").setup({
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' }
   },
-  "nvim-telescope/telescope.nvim",
+  "nvim-lua/plenary.nvim",
+  "BurntSushi/ripgrep",
+  {
+    "nvim-telescope/telescope-fzf-native.nvim",
+    build = 'make',
+  },
+  {
+    "nvim-telescope/telescope.nvim",
+    tag = '0.1.5',
+    -- config = function()
+    --   require("lvim.core.telescope").setup()
+    -- end,
+    dependencies = { "telescope-fzf-native.nvim" },
+    lazy = true,
+    cmd = "Telescope",
+    -- enabled = lvim.builtin.telescope.active,
+  },
   "nvim-lua/plenary.nvim",
   {
     "startup-nvim/startup.nvim",
@@ -51,7 +74,7 @@ require("lazy").setup({
       },
 
       -- Set keymap = false to disable keymapping
-      -- keymap = { 
+      -- keymap = {
       --   prefix = '<leader>n'
       -- }
     },
@@ -69,8 +92,12 @@ require("lazy").setup({
     'gorbit99/codewindow.nvim',
     config = function()
       -- local codewindow = require('codewindow')
-      require('codewindow').setup({})
-      -- require('codewindow').setup({auto_enable = true})
+      require('codewindow').setup({
+        max_lines = nil,
+        minimap_width = 16,
+        auto_enable = false,
+        screen_bounds = 'background',
+      })
       require('codewindow').apply_default_keybinds()
     end,
   },
@@ -88,25 +115,34 @@ require("lazy").setup({
     end,
   },
   'RRethy/vim-illuminate',
-  'ms-jpq/chadtree',
+  {
+    'ms-jpq/chadtree',
+    branch = "chad",
+    build = "python3 -m chadtree deps",
+  },
   'rmehri01/onenord.nvim',
   {
     'olivercederborg/poimandres.nvim',
     lazy = false,
     priority = 1000,
     config = function()
-      require('poimandres').setup {
-        -- leave this setup function empty for default config
-        -- or refer to the configuration section
-        -- for configuration options
-      }
+      require('poimandres').setup {}
     end,
-
-    -- optionally set the colorscheme within lazy config
     init = function()
       vim.cmd("colorscheme poimandres")
     end
   },
+  {
+    'lewis6991/gitsigns.nvim',
+    config = function()
+      require('gitsigns').setup {}
+    end
+  },
+  {
+    'smoka7/hop.nvim',
+    version = "*",
+    opts = {},
+  }
   -- {
   --   'nvimdev/dashboard-nvim',
   --   event = 'VimEnter',
@@ -120,51 +156,39 @@ require("lazy").setup({
 })
 
 require("mason").setup()
+require("mason-lspconfig").setup()
 require('lspconfig').bashls.setup({})
+-- require('lspconfig').java_language_server.setup({})
+require('lspconfig').jdtls.setup({})
 require('lspconfig').lua_ls.setup({})
+-- require("lspconfig").ruby_ls.setup({})
+require("lspconfig").sorbet.setup({})
 
-require("outline").setup()
---require("startup").setup({theme = "evil"})
-
--- stylua: ignore
-local colors = {
-  blue   = '#80a0ff',
-  cyan   = '#79dac8',
-  black  = '#080808',
-  white  = '#c6c6c6',
-  red    = '#ff5189',
-  violet = '#d183e8',
-  grey   = '#303030',
-}
-
-local bubbles_theme = {
-  normal = {
-    a = { fg = colors.black, bg = colors.violet },
-    b = { fg = colors.white, bg = colors.grey },
-    c = { fg = colors.white },
-  },
-
-  insert = { a = { fg = colors.black, bg = colors.blue } },
-  visual = { a = { fg = colors.black, bg = colors.cyan } },
-  replace = { a = { fg = colors.black, bg = colors.red } },
-
-  inactive = {
-    a = { fg = colors.white, bg = colors.black },
-    b = { fg = colors.white, bg = colors.black },
-    c = { fg = colors.white },
-  },
-}
+-- require("outline").setup()
+require("startup").setup({theme = "evil"})
 
 require('lualine').setup {
   options = {
-    theme = bubbles_theme,
+    theme = 'poimandres',
     component_separators = '',
     section_separators = { left = '', right = '' },
     always_divide_middle = true,
   },
   sections = {
     lualine_a = { { 'mode', separator = { left = '' }, right_padding = 2 } },
-    lualine_b = { { 'filename', file_status = true, path = 3, shorting_target = 40 }, 'branch', 'diff' },
+    lualine_b = {
+      {
+        'filename',
+        file_status = true,
+        path = 4,  -- 0: Just the filename
+                   -- 1: Relative path
+                   -- 2: Absolute path
+                   -- 3: Absolute path, with tilde as the home directory
+                   -- 4: Filename and parent dir, with tilde as the home directory
+        shorting_target = 40
+      },
+      'diff'
+    },
     lualine_c = {
       '%=', --[[ add your center compoentnts here in place of this comment ]]
     },
@@ -180,13 +204,63 @@ require('lualine').setup {
     lualine_c = {},
     lualine_x = {},
     lualine_y = {},
-    lualine_z = { 'location' },
+    lualine_z = {},
   },
   tabline = {},
-  extensions = {},
+  extensions = { 'chadtree', 'mason' },
 }
 
 vim.cmd("set virtualedit=all")
+vim.cmd("set nowrap")
 
--- require('onenord').setup({})
+vim.keymap.set({'n'}, "<leader>ww", "<Cmd>set nowrap!<CR>")
+
+vim.keymap.set({'n', 'c', 'i', 'v'}, '<C-b>', ':CHADopen<CR>')
+vim.keymap.set({'n'}, '<C-o>', ':Telescope find_files<CR>')
+
+vim.keymap.set({'n', 'v'}, '<Tab>', '>>')
+vim.keymap.set({'i'}, '<Tab>', '<Esc>>>i')
+vim.keymap.set({'n', 'v'}, '<S-Tab>', '<<')
+vim.keymap.set({'i'}, '<S-Tab>', '<Esc><<i')
+
+vim.keymap.set({'n'}, '<C-o>', ':Telescope find_files<CR>')  -- builtin.find_files	Lists files in your current working directory
+-- vim.keymap.set({'n'}, '<C-O>', ':Telescope git_files<CR>')   -- Fuzzy search through the output of git ls-files command,
+-- vim.keymap.set({'n'}, '<C-f>', ':Telescope grep_string<CR>') -- Searches for the string under your cursor or selection
+vim.keymap.set({'n'}, '<leader>ff', ':Telescope live_grep<CR>')   -- Search for a string in your current working directory
+
+vim.keymap.set({'n'}, '<M-Up>', '<Cmd>move .-2<CR>')
+vim.keymap.set({'n'}, '<M-Down>', '<Cmd>move .+1<CR>')
+
+vim.keymap.set({'n', 'i'}, '<C-j>', '<Cmd>HopWord<CR>')
+
+-- Insert <C-J> = insert new line
+-- Insert <C-M> = insert new line
+-- Insert <C-W> = Delete the word before cursor
+-- Insert <C-U> = Delete all before cursor
+-- Insert <C-R>* = print clipboard contents
+-- Insert <C-T> = Indent line
+-- Insert <C-D> = Unindent line
+--
+-- Normal y y = Yank line
+-- Normal p = put after current line
+-- Normal P = put before the current line
+
+vim.o.foldenable = true
+vim.o.foldmethod = 'syntax'
+vim.o.foldlevel = 1
+vim.o.foldlevelstart = 1
+-- Normal zo = Open fold
+-- Normal zO = Open folds recursivly
+-- Normal zc = Close fold
+-- Normal zC = Close fold recursivly
+-- Normal za = Toggle fold
+-- Normal zA = Toggle fold recursivly
+-- Normal zx = Reapply folding
+-- Normal zm = Fold more
+-- Normal zM = Close all folds
+-- Normal zr = Fold less
+-- Normal zR = Unfold all
+-- Normal z =
+
+
 

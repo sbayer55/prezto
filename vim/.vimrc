@@ -41,7 +41,8 @@ let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 set noswapfile
 
 "turn on numbering
-set nu
+set number
+set relativenumber
 
 "------------Start Python PEP 8 stuff----------------
 " Number of spaces that a pre-existing tab is equal to.

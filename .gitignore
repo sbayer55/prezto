@@ -4,4 +4,4 @@ modules/*/cache.zsh
 contrib
 runcoms/amazonrc
 .DS_Store
-nvim/lazy-lock.json
+*/lazy-lock.json
