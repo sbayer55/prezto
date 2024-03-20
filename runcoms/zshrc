@@ -69,7 +69,7 @@ alias "kpf"="kubectl port-forward"
 alias "kl"="kubectl logs"
 alias "echo"="echo -e"
 alias "beep"="echo -ne '\\007'"
-
+alias "win-steam"="gameportingtoolkit ~/steam-wine 'C:\\Program Files (x86)\\Steam\\steam.exe'"
 
 function tmux-help () {
     echo "tmux"
@@ -103,6 +103,7 @@ function nvm-init () {
     [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 }
 
+
 export NVM_DIR="$HOME/.nvm"
 export AWS_DEFAULT_REGION="us-west-2"
 export AWS_REGION="us-west-2"
@@ -123,4 +124,5 @@ eval "$(zoxide init --cmd 'cd' zsh)"
 
 [[ -s "${HOME}/.autojump/etc/profile.d/autojump.sh" ]] && source "${HOME}/.autojump/etc/profile.d/autojump.sh"
 autoload -U compinit && compinit -u
+
 
