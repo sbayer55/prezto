@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+# enable script debugging
 set -x
 
 ZPREZTO_HOME=${HOME}/.zprezto
@@ -30,6 +31,9 @@ ln -s ${ZPREZTO_HOME}/runcoms/zshenv ${HOME}/.zshenv
 ln -s ${ZPREZTO_HOME}/runcoms/zshrc ${HOME}/.zshrc
 ln -s ${ZPREZTO_HOME}/nvim ${HOME}/.config/nvim
 ln -s ${ZPREZTO_HOME}/lvim ${HOME}/.config/lvim
+ln -s ${ZPREZTO_HOME}/.tmux.conf ${HOME}/.tmux.conf
+
+git clone https://github.com/tmux-plugins/tpm ${HOME}/.tmux/plugins/tpm
 
 # echo "Install VIM profile? (yes/no [yes])"
 # read input
@@ -53,3 +57,16 @@ fi
 if [[ "${input}" == "yes" ]]; then
     LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
 fi
+
+echo "Run brew install? (yes/no [yes])"
+read input
+
+if [[ "x${input}" == "x" ]]; then
+    input="yes"
+fi
+
+if [[ "${input}" == "yes" ]]; then
+    brew analytics off
+    brew install midnight-commander wget git-delta fd eza bat ollama fish tree htop gnupg neovim ripgrep jq fzf zoxide btop
+fi
+

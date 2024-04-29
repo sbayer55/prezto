@@ -5,6 +5,9 @@
 # Authors: Sorin Ionescu <sorin.ionescu@gmail.com>
 #
 
+# Disable RVM module
+exit 0
+
 # Load RVM into the shell session.
 if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
   # Unset AUTO_NAME_DIRS since auto adding variable-stored paths to ~ list

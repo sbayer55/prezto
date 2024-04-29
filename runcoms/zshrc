@@ -4,12 +4,13 @@
 # zmodload zsh/zprof
 
 # Prefix PATH
+export PATH="/opt/homebrew/Cellar/ruby/3.3.0/bin:$PATH"
 export PATH="$HOME/code/bin/commands:${PATH}"
 export PATH="$HOME/code/bin/tools:${PATH}"
 export PATH="$HOME/code/bin:${PATH}"
 export PATH="$HOME/Library/Application Support/JetBrains/Toolbox/scripts:${PATH}"
 export PATH="/opt/homebrew/bin:${PATH}"
-export PATH="/usr/local/opt/curl/bin:$PATH" 
+export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="${HOME}/.local/bin:${PATH}"
 
 # Suffix PATH
@@ -49,6 +50,13 @@ if [[ -s "/usr/local/opt/ruby@2.7/bin:$HOME/.toolbox/bin" ]]; then
     export PATH="/usr/local/opt/ruby@2.7/bin:$HOME/.toolbox/bin:$PATH"
 fi
 
+# iTerm
+if [[ -s "${HOME}/.iterm2_shell_integration.bash" ]]; then
+    source "${HOME}/.iterm2_shell_integration.bash"
+elif [[ -s "${HOME}/.iterm2_shell_integration.zsh" ]]; then
+    source "${HOME}/.iterm2_shell_integration.zsh"
+fi
+
 export EDITOR=vim
 export VISUAL=vim
 
@@ -60,9 +68,7 @@ alias "java-version"="source $HOME/code/bin/java-version.sh"
 alias "rm-images"="docker images | awk 'NR!=1' | awk '{ print \$3 }' | xargs docker image rm"
 alias "cd-scratches"="cd '${SCRATCHES}'"
 
-alias "ls"="ls -Alh --color=auto"
-alias "ll"="ls -Alh --color=auto"
-alias "lf"="ls -la | grep --color=auto"
+alias "ll"="/bin/ls -Alh --color=auto"
 alias "k"="kubectl"
 alias "kgp"="kubectl get pods"
 alias "kpf"="kubectl port-forward"
@@ -84,10 +90,6 @@ function tmux-help () {
 alias "python"="python3"
 alias "dc"="docker-compose"
 
-export DATA_PREPPER_HOME="/Users/smbayer/.config/data-prepper"
-export DATA_PREPPER_PIPELINE_YAML="${DATA_PREPPER_HOME}/pipeline.yaml"
-export DATA_PREPPER_CONFIG_YAML="${DATA_PREPPER_HOME}/data-prepper-config.yaml"
-
 function docker-compose-restart () {
     local WORKER=$1
     echo "Restarting worker ${WORKER}"
@@ -101,6 +103,7 @@ function nvm-init () {
     export NVM_DIR="$HOME/.nvm"
     [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
     [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+    nvm current
 }
 
 
@@ -118,11 +121,126 @@ alias "git-diff-search"="git diff --color-words --word-diff-regex"
 # git-diff-search '[a-z]*'
 alias "git-blame"="git blame --color-lines --color-by-age"
 alias "git-graph"="git log --oneline --decorate --all --graph"
+alias "kill-logi"="ps -A | grep -i 'Logitech' | grep -v 'grep' | awk '{ print \$1 }' | sudo xargs kill -9"
 
 eval "$(zoxide init --cmd 'cd' zsh)"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# ---- FZF -----
+
+# --- setup fzf theme ---
+fg="#CBE0F0"
+bg="#011628"
+bg_highlight="#143652"
+purple="#B388FF"
+blue="#06BCE4"
+cyan="#2CF9ED"
+
+export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${bg_highlight},hl+:${purple},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
+
+# -- Use fd instead of fzf --
+
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+
+# Use fd (https://github.com/sharkdp/fd) for listing path candidates.
+# - The first argument to the function ($1) is the base path to start traversal
+# - See the source code (completion.{bash,zsh}) for the details.
+_fzf_compgen_path() {
+  fd --hidden --exclude .git . "$1"
+}
+
+# Use fd to generate the list for directory completion
+_fzf_compgen_dir() {
+  fd --type=d --hidden --exclude .git . "$1"
+}
+
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/fzf-git.sh" ]]; then
+    source "${ZDOTDIR:-$HOME}/.zprezto/fzf-git.sh"
+fi
+
+export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
+export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
+
+# Advanced customization of fzf options via _fzf_comprun function
+# - The first argument to the function is the name of the command.
+# - You should make sure to pass the rest of the arguments to fzf.
+_fzf_comprun() {
+  local command=$1
+  shift
+
+  case "$command" in
+    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+    export|unset) fzf --preview "eval 'echo \$'{}"         "$@" ;;
+    ssh)          fzf --preview 'dig {}'                   "$@" ;;
+    *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
+  esac
+}
+
+function fzf-keybinds() {
+    echo "Files                         <󰘴> g <󰘴> F"
+    echo "Branches                      <󰘴> g <󰘴> B"
+    echo "Tags                          <󰘴> g <󰘴> T"
+    echo "Remotes                       <󰘴> g <󰘴> R"
+    echo "commit Hashes                 <󰘴> g <󰘴> H"
+    echo "Stashes                       <󰘴> g <󰘴> S"
+    echo "reflogs                       <󰘴> g <󰘴> L"
+    echo "Worktrees                     <󰘴> g <󰘴> W"
+    echo "Each ref (git for-each-ref)   <󰘴> g <󰘴> E"
+}
+
+# ----- Bat (better cat) -----
+
+export BAT_THEME=tokyonight_moon
+alias bat="bat --paging=never"
+
+# ---- Eza (better ls) -----
+
+alias ls="eza --color=auto --color-scale-mode=fixed --long --git --icons=always --time-style=relative --group-directories-first"
+
+# ---- Jump -----
+
 [[ -s "${HOME}/.autojump/etc/profile.d/autojump.sh" ]] && source "${HOME}/.autojump/etc/profile.d/autojump.sh"
 autoload -U compinit && compinit -u
 
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+function tmux-help () {
+    echo "Tmux Create Window:            <󰘴-b> c"
+    echo "Tmux Rename Window:            <󰘴-b> ,"
+    echo "Tmux Close Window:             <󰘴-b> &"
+    echo "Tmux List Window:              <󰘴-b> w"
+    echo "Tmux Previous Window:          <󰘴-b> p"
+    echo "Tmux Next Window:              <󰘴-b> n"
+    echo "Tmux Switch Window:            <󰘴-b> 0..9"
+    echo "Tmux Split Window Vertical:    <󰘴-b> %"
+    echo 'Tmux Split Window Horizontal:  <󰘴-b> "'
+    echo "Tmux Next Pane:                <󰘴-b> o"
+    echo "Tmux Show Pane Numbers:        <󰘴-b> p"
+    echo "Tmux Switch Pane:              <󰘴-b> q 0..9"
+    echo "Tmux Convert Pane To Window:   <󰘴-b> q 0..9"
+    echo "Tmux Close Pane:               <󰘴-b> x"
+}
+
+# iTerm tips
+blue_blink='\033[34;5m'
+no_color='\033[0m'
+printf "%b ___   _______  _______  ______    __   __ %b\n" "${blue_blink}" "${no_color}"
+printf "%b|   | |       ||       ||    _ |  |  |_|  |%b\n" "${blue_blink}" "${no_color}"
+printf "%b|   | |_     _||    ___||   | ||  |       |%b\n" "${blue_blink}" "${no_color}"
+printf "%b|   |   |   |  |   |___ |   |_||_ |       |%b\n" "${blue_blink}" "${no_color}"
+printf "%b|   |   |   |  |    ___||    __  ||       |%b\n" "${blue_blink}" "${no_color}"
+printf "%b|   |   |   |  |   |___ |   |  | || ||_|| |%b\n" "${blue_blink}" "${no_color}"
+printf "%b|___|   |___|  |_______||___|  |_||_|   |_|%b\n" "${blue_blink}" "${no_color}"
+echo ""
+echo "DevDesktop:       <󰘴-󰘳> a"
+echo "Autocompletion:   <󰘳> ;"
+echo "Toolbelt:         <󰘳> b"
+echo "Edit Session:     <󰘳> i"
+echo "Timestamps:       <󰘶-󰘳> e"
+echo "Alert On Finish:  <󰘵-󰘳> a"
+echo "Git History:      <󰘳> g <󰘳> h"
+
+tmux-help
 
