@@ -67,6 +67,6 @@ fi
 
 if [[ "${input}" == "yes" ]]; then
     brew analytics off
-    brew install midnight-commander wget git-delta fd eza bat ollama fish tree htop gnupg neovim ripgrep jq fzf zoxide btop
+    brew install midnight-commander wget git-delta fd eza bat ollama fish tree htop gnupg neovim ripgrep jq fzf zoxide btop bottom atuin
 fi
 

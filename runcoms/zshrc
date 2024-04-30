@@ -50,6 +50,10 @@ if [[ -s "/usr/local/opt/ruby@2.7/bin:$HOME/.toolbox/bin" ]]; then
     export PATH="/usr/local/opt/ruby@2.7/bin:$HOME/.toolbox/bin:$PATH"
 fi
 
+if [[ -f "${HOME}/.fzf.zsh" ]]; then
+    source "${HOME}/.fzf.zsh"
+fi
+
 # iTerm
 if [[ -s "${HOME}/.iterm2_shell_integration.bash" ]]; then
     source "${HOME}/.iterm2_shell_integration.bash"
@@ -61,8 +65,6 @@ export EDITOR=vim
 export VISUAL=vim
 
 alias "grep"="grep --color=auto"
-alias "reload"="source ~/.zshrc"
-alias "refresh"="source ~/.zshrc"
 alias "java-version"="source $HOME/code/bin/java-version.sh"
 # alias "rm-containers"="docker rm $(docker ps --filter status=exited -q)"
 alias "rm-images"="docker images | awk 'NR!=1' | awk '{ print \$3 }' | xargs docker image rm"
@@ -124,7 +126,6 @@ alias "git-graph"="git log --oneline --decorate --all --graph"
 alias "kill-logi"="ps -A | grep -i 'Logitech' | grep -v 'grep' | awk '{ print \$1 }' | sudo xargs kill -9"
 
 eval "$(zoxide init --cmd 'cd' zsh)"
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # ---- FZF -----
 
@@ -203,6 +204,14 @@ alias ls="eza --color=auto --color-scale-mode=fixed --long --git --icons=always 
 
 [[ -s "${HOME}/.autojump/etc/profile.d/autojump.sh" ]] && source "${HOME}/.autojump/etc/profile.d/autojump.sh"
 autoload -U compinit && compinit -u
+
+# ---- atuin (command history) -----
+if type "atuin" > /dev/null
+then
+    eval "$(atuin init zsh)"
+else
+    echo "!!! atuin not found !!!"
+fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
