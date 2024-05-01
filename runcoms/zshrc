@@ -12,10 +12,15 @@ export PATH="$HOME/Library/Application Support/JetBrains/Toolbox/scripts:${PATH}
 export PATH="/opt/homebrew/bin:${PATH}"
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="${HOME}/.local/bin:${PATH}"
+export PATH="/opt/homebrew/opt/postgresql@16/bin:${PATH}"
+export PATH="/opt/homebrew/Cellar/ruby/3.3.0/bin:${PATH}"
 
 # Suffix PATH
 export PATH="$PATH:$HOME/.toolbox/bin"
 export PATH="$PATH:$HOME/.rvm/bin"
+
+alias start-postgres='LC_ALL="C" /opt/homebrew/opt/postgresql@16/bin/postgres -D /opt/homebrew/var/postgresql@16'
+alias rails='gem exec rails'
 
 if [[ -s "/opt/homebrew/opt/python@3.12/bin/python3" ]]; then
     export PATH="/opt/homebrew/opt/python@3.12/bin:$PATH"
