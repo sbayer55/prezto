@@ -66,7 +66,22 @@ if [[ "x${input}" == "x" ]]; then
 fi
 
 if [[ "${input}" == "yes" ]]; then
-    brew analytics off
-    brew install midnight-commander wget git-delta fd eza bat ollama fish tree htop gnupg neovim ripgrep jq fzf zoxide btop bottom atuin
+    if type brew; then
+        brew analytics off
+        brew install midnight-commander wget git-delta fd eza bat ollama fish tree htop gnupg neovim ripgrep jq fzf zoxide btop bottom atuin
+    else
+        echo "Attempting cargo install"
+        if ! type cargo; then
+            if type yum; then
+                sudo yum install cargo
+            fi
+        fi
+        if type cargo; then
+            cargo install atuin
+            cargo install eza
+            cargo install git-delta
+        else
+            echo "Cargo install failed"
+        fi
+    fi
 fi
-

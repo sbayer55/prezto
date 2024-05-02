@@ -214,6 +214,7 @@ autoload -U compinit && compinit -u
 if type "atuin" > /dev/null
 then
     eval "$(atuin init zsh)"
+    eval "$(atuin gen-completions --shell zsh)"
 else
     echo "!!! atuin not found !!!"
 fi
