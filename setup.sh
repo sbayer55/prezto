@@ -85,3 +85,16 @@ if [[ "${input}" == "yes" ]]; then
         fi
     fi
 fi
+
+echo "Install Starship? (yes/no [yes])"
+read input
+
+if [[ "x${input}" == "x" ]]; then
+    input="yes"
+fi
+
+if [[ "${input}" == "yes" ]]; then
+    # Need OS check
+    curl -sS https://starship.rs/install.sh | shi
+fi
+
