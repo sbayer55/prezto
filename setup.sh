@@ -7,7 +7,7 @@ ZPREZTO_HOME=${HOME}/.zprezto
 
 # Check user dir
 if [ "$(pwd)" != "$(echo ~$USER)/.zprezto" ]; then
-    echo "You must download Steves repo in ~/.zprezto"
+    echo "You must download Steven's repo in ~/.zprezto"
     exit 1
 fi
 
@@ -29,9 +29,17 @@ ln -s ${ZPREZTO_HOME}/runcoms/zpreztorc ${HOME}/.zpreztorc
 ln -s ${ZPREZTO_HOME}/runcoms/zprofile ${HOME}/.zprofile
 ln -s ${ZPREZTO_HOME}/runcoms/zshenv ${HOME}/.zshenv
 ln -s ${ZPREZTO_HOME}/runcoms/zshrc ${HOME}/.zshrc
-ln -s ${ZPREZTO_HOME}/nvim ${HOME}/.config/nvim
-ln -s ${ZPREZTO_HOME}/lvim ${HOME}/.config/lvim
 ln -s ${ZPREZTO_HOME}/.tmux.conf ${HOME}/.tmux.conf
+
+mkdir $HOME/.config
+
+# Make sure atuin is gone
+rm -Rf $HOME/.config/atuin
+
+for config_item in ${ZPREZTO_HOME}/.config/**
+do
+    ln -s $config_item $HOME/.config
+done
 
 git clone https://github.com/tmux-plugins/tpm ${HOME}/.tmux/plugins/tpm
 

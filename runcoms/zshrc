@@ -3,6 +3,8 @@
 # Profile Prezto startup. Use "zprof" to print results.
 # zmodload zsh/zprof
 
+export ZPREZTO_HOME=${HOME}/.zprezto
+
 # Prefix PATH
 export PATH="/opt/homebrew/Cellar/ruby/3.3.0/bin:$PATH"
 export PATH="$HOME/code/bin/commands:${PATH}"
@@ -19,16 +21,10 @@ export PATH="/opt/homebrew/Cellar/ruby/3.3.0/bin:${PATH}"
 export PATH="$PATH:$HOME/.toolbox/bin"
 export PATH="$PATH:$HOME/.rvm/bin"
 
-alias start-postgres='LC_ALL="C" /opt/homebrew/opt/postgresql@16/bin/postgres -D /opt/homebrew/var/postgresql@16'
-alias rails='gem exec rails'
-
-if [[ -s "/opt/homebrew/opt/python@3.12/bin/python3" ]]; then
+if [[ -s "/opt/homebrew/opt/python@3.12/bin" ]]; then
     export PATH="/opt/homebrew/opt/python@3.12/bin:$PATH"
-    alias "python3"="/opt/homebrew/opt/python@3.12/bin/python"
 elif [[ -s "/opt/python3/bin/python3" ]]; then
     export PATH="/opt/python3/bin:$PATH"
-    alias "python3"="/opt/python3/bin/python3"
-    alias "python"="/opt/python3/bin/python3"
 fi
 
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
@@ -69,20 +65,38 @@ fi
 export EDITOR=vim
 export VISUAL=vim
 
+# OS defaults
 alias "grep"="grep --color=auto"
-alias "java-version"="source $HOME/code/bin/java-version.sh"
-# alias "rm-containers"="docker rm $(docker ps --filter status=exited -q)"
-alias "rm-images"="docker images | awk 'NR!=1' | awk '{ print \$3 }' | xargs docker image rm"
-alias "cd-scratches"="cd '${SCRATCHES}'"
-
 alias "ll"="/bin/ls -Alh --color=auto"
+alias "echo"="echo -e"
+alias "beep"="echo -ne '\\007'"
+
+# Misc
+alias "java-version"="source $HOME/code/bin/java-version.sh"
+alias "start-postgres"='LC_ALL="C" /opt/homebrew/opt/postgresql@16/bin/postgres -D /opt/homebrew/var/postgresql@16'
+alias "rails"='gem exec rails'
+alias "python"="python3"
+
+# MacOS start steam using game toolkit (Apples fork of wine)
+alias "win-steam"="gameportingtoolkit ~/steam-wine 'C:\\Program Files (x86)\\Steam\\steam.exe'"
+
+# Kubernetes
 alias "k"="kubectl"
 alias "kgp"="kubectl get pods"
 alias "kpf"="kubectl port-forward"
 alias "kl"="kubectl logs"
-alias "echo"="echo -e"
-alias "beep"="echo -ne '\\007'"
-alias "win-steam"="gameportingtoolkit ~/steam-wine 'C:\\Program Files (x86)\\Steam\\steam.exe'"
+
+# Helpful git commands
+alias "git-log"="git log --pretty=oneline"
+alias "git-diff"="git diff --color-words"
+alias "git-file-diff"="git diff --no-index"
+alias "git-diff-staged"="git diff --staged"
+alias "git-diff-search"="git diff --color-words --word-diff-regex"
+alias "git-blame"="git blame --color-lines --color-by-age"
+alias "git-graph"="git log --oneline --decorate --all --graph"
+
+# Easy stop logictech process when mx devices stop working
+alias "kill-logi"="ps -A | grep -i 'Logitech' | grep -v 'grep' | awk '{ print \$1 }' | sudo xargs kill -9"
 
 function tmux-help () {
     echo "tmux"
@@ -93,9 +107,10 @@ function tmux-help () {
     echo "To move between panels use <ctrl> + b, <any arrow>"
 }
 
-# Danger Alias
-alias "python"="python3"
+
+# Docker
 alias "dc"="docker-compose"
+alias "rm-images"="docker images | awk 'NR!=1' | awk '{ print \$3 }' | xargs docker image rm"
 
 function docker-compose-restart () {
     local WORKER=$1
@@ -106,6 +121,8 @@ function docker-compose-restart () {
     docker-compose start ${WORKER}
 }
 
+# NVM
+export NVM_DIR="$HOME/.nvm"
 function nvm-init () {
     export NVM_DIR="$HOME/.nvm"
     [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
@@ -113,22 +130,11 @@ function nvm-init () {
     nvm current
 }
 
-
-export NVM_DIR="$HOME/.nvm"
+# AWS
 export AWS_DEFAULT_REGION="us-west-2"
 export AWS_REGION="us-west-2"
 
-alias "git-log"="git log --pretty=oneline"
-alias "git-diff"="git diff --color-words"
-alias "git-file-diff"="git diff --no-index"
-# git-file-diff ./befroe.json ./after.json
-alias "git-diff-staged"="git diff --staged"
-# git-diff-staged origin/mainline ./rails-root/app/models/user.rb
-alias "git-diff-search"="git diff --color-words --word-diff-regex"
-# git-diff-search '[a-z]*'
-alias "git-blame"="git blame --color-lines --color-by-age"
-alias "git-graph"="git log --oneline --decorate --all --graph"
-alias "kill-logi"="ps -A | grep -i 'Logitech' | grep -v 'grep' | awk '{ print \$1 }' | sudo xargs kill -9"
+# ---- zoxide -----
 
 eval "$(zoxide init --cmd 'cd' zsh)"
 
