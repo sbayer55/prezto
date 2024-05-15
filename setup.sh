@@ -16,30 +16,7 @@ git submodule update --init --recursive
 
 chsh -s /bin/zsh
 
-# Link runcoms
-rm -f ${HOME}/.zlogin
-rm -f ${HOME}/.zlogout
-rm -f ${HOME}/.zpreztorc
-rm -f ${HOME}/.zprofile
-rm -f ${HOME}/.zshenv
-rm -f ${HOME}/.zshrc
-ln -s ${ZPREZTO_HOME}/runcoms/zlogin ${HOME}/.zlogin
-ln -s ${ZPREZTO_HOME}/runcoms/zlogout ${HOME}/.zlogout
-ln -s ${ZPREZTO_HOME}/runcoms/zpreztorc ${HOME}/.zpreztorc
-ln -s ${ZPREZTO_HOME}/runcoms/zprofile ${HOME}/.zprofile
-ln -s ${ZPREZTO_HOME}/runcoms/zshenv ${HOME}/.zshenv
-ln -s ${ZPREZTO_HOME}/runcoms/zshrc ${HOME}/.zshrc
-ln -s ${ZPREZTO_HOME}/.tmux.conf ${HOME}/.tmux.conf
-
-mkdir $HOME/.config
-
-# Make sure atuin is gone
-rm -Rf $HOME/.config/atuin
-
-for config_item in ${ZPREZTO_HOME}/.config/**
-do
-    ln -s $config_item $HOME/.config
-done
+source "${ZPREZTO_HOME}/setup-symlinks.sh"
 
 git clone https://github.com/tmux-plugins/tpm ${HOME}/.tmux/plugins/tpm
 
