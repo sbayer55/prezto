@@ -228,6 +228,16 @@ fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
+function iterm-help () {
+    echo "DevDesktop:                    <󰘴-󰘳> a"
+    echo "Autocompletion:                <󰘳> ;"
+    echo "Toolbelt:                      <󰘶-󰘳> b"
+    echo "Edit Session:                  <󰘳> i"
+    echo "Timestamps:                    <󰘶-󰘳> e"
+    echo "Alert On Finish:               <󰘵-󰘳> a"
+    echo "Git History:                   <󰘳> g <󰘳> h"
+}
+
 function tmux-help () {
     echo "Tmux Create Window:            <󰘴-b> c"
     echo "Tmux Rename Window:            <󰘴-b> ,"
@@ -256,13 +266,3 @@ printf "%b|   |   |   |  |    ___||    __  ||       |%b\n" "${blue_blink}" "${no
 printf "%b|   |   |   |  |   |___ |   |  | || ||_|| |%b\n" "${blue_blink}" "${no_color}"
 printf "%b|___|   |___|  |_______||___|  |_||_|   |_|%b\n" "${blue_blink}" "${no_color}"
 echo ""
-echo "DevDesktop:       <󰘴-󰘳> a"
-echo "Autocompletion:   <󰘳> ;"
-echo "Toolbelt:         <󰘳> b"
-echo "Edit Session:     <󰘳> i"
-echo "Timestamps:       <󰘶-󰘳> e"
-echo "Alert On Finish:  <󰘵-󰘳> a"
-echo "Git History:      <󰘳> g <󰘳> h"
-
-tmux-help
-
