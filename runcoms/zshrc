@@ -42,8 +42,8 @@ if [[ -s "$HOME/.jdks/corretto-21.0.2/bin/java" ]]; then
 fi
 
 # Maven
-if [[ -s "/home/smbayer/apache-maven-3.9.6/bin/mvn" ]]; then
-    export PATH="/home/smbayer/apache-maven-3.9.6/bin:$PATH"
+if [[ -s "$HOME/apache-maven-3.9.6/bin/mvn" ]]; then
+    export PATH="$HOME/apache-maven-3.9.6/bin:$PATH"
 fi
 
 # Ruby 2.7
@@ -60,6 +60,11 @@ if [[ -s "${HOME}/.iterm2_shell_integration.bash" ]]; then
     source "${HOME}/.iterm2_shell_integration.bash"
 elif [[ -s "${HOME}/.iterm2_shell_integration.zsh" ]]; then
     source "${HOME}/.iterm2_shell_integration.zsh"
+fi
+
+# Cargo
+if [[ -s "$HOME/.cargo/bin" ]]; then
+    export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
 export EDITOR=vim
