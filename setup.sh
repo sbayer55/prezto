@@ -18,6 +18,9 @@ chsh -s /bin/zsh
 
 source "${ZPREZTO_HOME}/setup-symlinks.sh"
 
+# Register "$(bat --config-dir)/themes" with bat
+bat cache --build
+
 git clone https://github.com/tmux-plugins/tpm ${HOME}/.tmux/plugins/tpm
 
 # echo "Install VIM profile? (yes/no [yes])"

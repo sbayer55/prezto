@@ -96,8 +96,7 @@ if status is-interactive
     # ----- Bat (better cat) -----
 
     set --export BAT_THEME tokyonight_moon
-    alias bat="bat --paging=never"
-    alias cat="bat --paging=never"
+    alias cat="bat"
 
     # ---- Eza (better ls) -----
 
