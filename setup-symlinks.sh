@@ -26,5 +26,6 @@ rm -Rf $HOME/.config/atuin
 
 for config_item in ${ZPREZTO_HOME}/.config/**
 do
+    rm -RI "$HOME/.config/$(basename "${config_item}")"
     ln -s $config_item $HOME/.config
 done
