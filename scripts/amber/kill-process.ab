@@ -1,0 +1,55 @@
+import { split } from "std"
+
+pub fun std_split(text: Text, delimiter: Text): [Text] {
+    let result = [Text]
+    unsafe $IFS="{delimiter}" read -ra {nameof result} <<< "\${nameof text}"$
+    return result
+}
+
+fun zsh_newline_split(text: Text): [Text] {
+    let result = [Text]
+    unsafe ${nameof result}=("\$\{(f){nameof text}}")$
+    return result
+}
+
+// mapfile -t bar <<< "$foo"
+fun bash_5_newline_split(text: Text): [Text] {
+    let result = [Text]
+    unsafe $mapfile -t {nameof result} <<< "\${nameof text}}"$
+    return result
+}
+
+fun bash_3_newline_split(text: Text): [Text] {
+    let result = [Text]
+    unsafe $IFS=\$'\n' {nameof result}=(\${nameof text})$
+    return result
+}
+
+fun kill_process(name: Text): Null {
+    // let ps_list = $ps -A | grep {name}$? as [Text]
+    let ps_list = ($ps -A | grep -vi 'grep' | grep -vi 'amber' | grep {name}$?) as [Text]
+
+    loop index, item in ps_list {
+        echo "item => {item}"
+    }
+}
+
+main {
+    // let process_names = ["MTLCompilerService", "Code"]
+    // let process_names = ["MTLCompilerService"]
+
+    // loop index, process_name in process_names {
+    //     kill_process(process_name) failed {
+    //         echo "Bad things happened"
+    //     }
+    // }
+    let foo = unsafe $echo "one fish\ntwo fish\nred fish\nblue fish"$
+    let bar = bash_3_newline_split(foo)
+    // let baz = len(foo)
+    unsafe $echo "foo = {foo}"$
+    unsafe $echo "bar = {bar}"$
+    unsafe $echo "bar[0] = {bar[0]}"$
+    loop index, item in bar {
+        echo "item => {item}"
+    }
+}
