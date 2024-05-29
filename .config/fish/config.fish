@@ -30,7 +30,7 @@ end
 
 # Java 21
 if test -e "$HOME/.jdks/corretto-21.0.2/bin/java"
-    set JAVA_HOME="$HOME/.jdks/corretto-21.0.2/bin"
+    set --export JAVA_HOME "$HOME/.jdks/corretto-21.0.2/bin"
     fish_add_path -p "$HOME/.jdks/corretto-21.0.2/bin"
 end
 
@@ -92,7 +92,7 @@ if status is-interactive
     end
 
     # source "${HOME}/.zprezto/fzf-git.sh"
-    
+
     # ----- Bat (better cat) -----
 
     set --export BAT_THEME tokyonight_moon
@@ -106,5 +106,7 @@ if status is-interactive
     zoxide init --cmd 'cd' fish | source
     atuin init fish | source
 
-    source ~/.iterm2_shell_integration.fish
+    if test -e ~/.iterm2_shell_integration.fish
+      source ~/.iterm2_shell_integration.fish
+    end
 end
