@@ -269,3 +269,8 @@ printf "%b|   |   |   |  |    ___||    __  ||       |%b\n" "${blue_blink}" "${no
 printf "%b|   |   |   |  |   |___ |   |  | || ||_|| |%b\n" "${blue_blink}" "${no_color}"
 printf "%b|___|   |___|  |_______||___|  |_||_|   |_|%b\n" "${blue_blink}" "${no_color}"
 echo ""
+
+# if you wish to use IMDS set AWS_EC2_METADATA_DISABLED=false
+
+export AWS_EC2_METADATA_DISABLED=true
+
