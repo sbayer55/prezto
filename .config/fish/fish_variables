@@ -29,4 +29,4 @@ SETUVAR fish_pager_color_description:yellow\x1e\x2di
 SETUVAR fish_pager_color_prefix:normal\x1e\x2d\x2dbold\x1e\x2d\x2dunderline
 SETUVAR fish_pager_color_progress:brwhite\x1e\x2d\x2dbackground\x3dcyan
 SETUVAR fish_pager_color_selected_background:\x2dr
-SETUVAR fish_user_paths:/home/smbayer/\x2ejdks/corretto\x2d21\x2e0\x2e2/bin\x1e/home/smbayer/\x2etoolbox/bin\x1e/home/smbayer/\x2elocal/bin\x1e/opt/homebrew/Cellar/ruby/3\x2e3\x2e0/bin\x1e/Users/smbayer/\x2ervm/bin\x1e/Users/smbayer/\x2etoolbox/bin\x1e/Users/smbayer/\x2elocal/bin\x1e/Users/smbayer/Library/Application\x20Support/JetBrains/Toolbox/scripts\x1e/Users/smbayer/code/bin\x1e/Users/smbayer/code/bin/tools\x1e/Users/smbayer/code/bin/commands\x1e/opt/homebrew/bin
+SETUVAR fish_user_paths:/Users/smbayer/\x2ecargo/bin\x1e/opt/homebrew/Cellar/ruby/3\x2e3\x2e0/bin\x1e/Users/smbayer/\x2ervm/bin\x1e/Users/smbayer/\x2etoolbox/bin\x1e/Users/smbayer/\x2elocal/bin\x1e/Users/smbayer/Library/Application\x20Support/JetBrains/Toolbox/scripts\x1e/Users/smbayer/code/bin\x1e/Users/smbayer/code/bin/tools\x1e/Users/smbayer/code/bin/commands\x1e/opt/homebrew/bin

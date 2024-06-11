@@ -165,6 +165,39 @@ enter_accept = true
 ## Alternatively, set env NO_MOTION=true
 # prefers_reduced_motion = true
 
+## Guessing based on help text
+## atuin search -h
+## Interactive history search
+##
+## Usage: atuin search [OPTIONS] [QUERY]...
+##
+## Arguments:
+##   [QUERY]...
+##
+## Options:
+##   -c, --cwd <CWD>                      Filter search result by directory
+##       --exclude-cwd <EXCLUDE_CWD>      Exclude directory from results
+##   -e, --exit <EXIT>                    Filter search result by exit code
+##       --exclude-exit <EXCLUDE_EXIT>    Exclude results with this exit code
+##   -b, --before <BEFORE>                Only include results added before this date
+##       --after <AFTER>                  Only include results after this date
+##       --limit <LIMIT>                  How many entries to return at most
+##       --offset <OFFSET>                Offset from the start of the results
+##   -i, --interactive                    Open interactive search UI
+##       --filter-mode <FILTER_MODE>      Allow overriding filter mode over config [possible values: global, host, session, directory, workspace]
+##       --search-mode <SEARCH_MODE>      Allow overriding search mode over config [possible values: prefix, full-text, fuzzy, skim]
+##       --keymap-mode <KEYMAP_MODE>      Notify the keymap at the shell's side [default: auto] [possible values: emacs, vim-normal, vim-insert, auto]
+##       --human                          Use human-readable formatting for time
+##       --cmd-only                       Show only the text of the command
+##       --delete                         Delete anything matching this query. Will not print out the match
+##       --delete-it-all                  Delete EVERYTHING!
+##   -r, --reverse                        Reverse the order of results, oldest first
+##       --timezone <TIMEZONE>            Display the command time in another timezone other than the configured default [aliases: tz]
+##   -f, --format <FORMAT>                Available variables: {command}, {directory}, {duration}, {user}, {host}, {time}, {exit} and {relativetime}. Example: --format "{time} - [{duration}] - {directory}$\t{command}"
+##       --inline-height <INLINE_HEIGHT>  Set the maximum number of lines Atuin's interface should take up
+##   -h, --help                           Print help (see more with '--help')
+# exit=0 not working
+
 [stats]
 ## Set commands where we should consider the subcommand for statistics. Eg, kubectl get vs just kubectl
 common_subcommands = [

@@ -44,6 +44,11 @@ if test -e "/usr/local/opt/ruby@2.7/bin"
     fish_add_path -p "/usr/local/opt/ruby@2.7/bin"
 end
 
+# Cargo
+if test -e "$HOME/.cargo/bin"
+    fish_add_path -p "$HOME/.cargo/bin"
+end
+
 if status is-interactive
     fish_add_path -p "/opt/homebrew/Cellar/ruby/3.3.0/bin"
 
