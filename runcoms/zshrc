@@ -28,13 +28,13 @@ elif [[ -s "/opt/python3/bin/python3" ]]; then
 fi
 
 # Enable zprezto
-# if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-#     source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-# fi
-
-if type starship; then
-    eval "$(starship init zsh)"
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+    source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
+
+# if type starship; then
+#     eval "$(starship init zsh)"
+# fi
 
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc" ]]; then
     source "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc"
@@ -86,6 +86,7 @@ alias "java-version"="source $HOME/code/bin/java-version.sh"
 alias "start-postgres"='LC_ALL="C" /opt/homebrew/opt/postgresql@16/bin/postgres -D /opt/homebrew/var/postgresql@16'
 alias "rails"='gem exec rails'
 alias "python"="python3"
+alias "kill-grep"="ps -aux | grep -i "
 
 # MacOS start steam using game toolkit (Apples fork of wine)
 alias "win-steam"="gameportingtoolkit ~/steam-wine 'C:\\Program Files (x86)\\Steam\\steam.exe'"
@@ -107,6 +108,19 @@ alias "git-graph"="git log --oneline --decorate --all --graph"
 
 # Easy stop logictech process when mx devices stop working
 alias "kill-logi"="ps -A | grep -i 'Logitech' | grep -v 'grep' | awk '{ print \$1 }' | sudo xargs kill -9"
+
+function kill-xargs () {
+    if [[ -n "$1" ]]
+    then
+        # OG
+        # src https://stackoverflow.com/questions/8987037/how-to-kill-all-processes-with-a-given-partial-name
+        # ps -ef | grep 'myProcessName' | grep -v grep | awk '{print $2}' | xargs -r kill -9
+        ps -aux | grep -i "$1" | grep -v grep | awk '{print $2}' | xargs -r kill -9
+    else
+        echo "A process name must be specified"
+        echo "will run \`ps -aux | grep -i "\$1" | grep -v grep | awk '{print \$2}' | xargs -r kill -9\`"
+    fi
+}
 
 function tmux-help () {
     echo "tmux"
@@ -218,7 +232,12 @@ alias cat="bat"
 
 # ---- Eza (better ls) -----
 
-alias ls="eza --color=auto --color-scale-mode=fixed --long --git --icons=always --time-style=relative --group-directories-first"
+# --color-scale, --colour-scale
+#   highlight levels of field distinctly.  Use comma(,) separated list of all, age, size
+alias ls="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=fixed --no-time --no-user --no-permissions"
+alias ll="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=fixed --time-style=relative --group-directories-first"
+alias la="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=fixed --time-style=relative --group-directories-first --all"
+alias lt="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=gradient --color-scale=age --no-time --tree --level 2"
 
 # ---- Jump -----
 
@@ -269,6 +288,19 @@ function tmux-help () {
     echo "Tmux Switch Pane:              <󰘴-b> q 0..9"
     echo "Tmux Convert Pane To Window:   <󰘴-b> q 0..9"
     echo "Tmux Close Pane:               <󰘴-b> x"
+}
+
+function lvim-help () {
+    echo "https://vimtricks.com/p/vim-code-folding/"
+    echo "za – Toggles the current fold open or closed. – The most useful command to know of all of these."
+    echo "zA – Same as za except it toggles all folds beneath as well. Since folds can be nested (such as with indent folding), this will toggle the state of all the folds underneath of it, not just the current fold."
+    echo "zc – Close the current fold."
+    echo "zC – Same as above, but closes folds nested underneath as well."
+    echo "zo – Open the current fold."
+    echo "zO – Same as above, but opens folds nested underneath as well."
+    echo "vimrc no fold: ':set nofoldenable'"
+    echo "<S-\`> - Open terminal"
+    echo "    or :terminal"
 }
 
 # iTerm tips
