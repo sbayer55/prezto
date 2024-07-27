@@ -51,9 +51,14 @@ if [[ -s "$HOME/apache-maven-3.9.6/bin/mvn" ]]; then
     export PATH="$HOME/apache-maven-3.9.6/bin:$PATH"
 fi
 
+# toolbox
+if [[ -s "$HOME/.toolbox/bin" ]]; then
+    export PATH="$HOME/.toolbox/bin:$PATH"
+fi
+
 # Ruby 2.7
-if [[ -s "/usr/local/opt/ruby@2.7/bin:$HOME/.toolbox/bin" ]]; then
-    export PATH="/usr/local/opt/ruby@2.7/bin:$HOME/.toolbox/bin:$PATH"
+if [[ -s "/usr/local/opt/ruby@2.7/bin" ]]; then
+    export PATH="/usr/local/opt/ruby@2.7/bin"
 fi
 
 if [[ -f "${HOME}/.fzf.zsh" ]]; then
@@ -70,6 +75,11 @@ fi
 # Cargo
 if [[ -s "$HOME/.cargo/bin" ]]; then
     export PATH="$HOME/.cargo/bin:$PATH"
+fi
+
+# If newer AWS CLI installed
+if [[ -s "/usr/local/aws-cli/v2/current/bin" ]]; then
+    export PATH="/usr/local/aws-cli/v2/current/bin:$PATH"
 fi
 
 if command -v "brew" > /dev/null && [[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
@@ -160,9 +170,6 @@ function nvm-init () {
     nvm current
 }
 
-# AWS
-export AWS_DEFAULT_REGION="us-west-2"
-export AWS_REGION="us-west-2"
 
 # ---- zoxide -----
 
