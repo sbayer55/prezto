@@ -56,7 +56,7 @@ fi
 if [[ "${input}" == "yes" ]]; then
     if type brew; then
         brew analytics off
-        brew install midnight-commander wget git-delta fd eza bat ollama fish tree htop gnupg neovim ripgrep jq fzf zoxide btop bottom atuin
+        brew install midnight-commander wget git-delta fd eza bat ollama fish tree htop gnupg neovim ripgrep jq fzf zoxide btop bottom atuin zsh-autosuggestions
     else
         echo "Attempting cargo install"
         if ! type cargo; then
@@ -71,6 +71,9 @@ if [[ "${input}" == "yes" ]]; then
         else
             echo "Cargo install failed"
         fi
+
+        # https://github.com/zsh-users/zsh-autosuggestions
+        git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
     fi
 fi
 

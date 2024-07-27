@@ -72,6 +72,12 @@ if [[ -s "$HOME/.cargo/bin" ]]; then
     export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
+if command -v "brew" > /dev/null && [[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+    source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+elif [[ -f "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+    source "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
+
 export EDITOR=vim
 export VISUAL=vim
 
