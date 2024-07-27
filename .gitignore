@@ -5,3 +5,6 @@ contrib
 runcoms/amazonrc
 .DS_Store
 */lazy-lock.json
+.idea
+.config/tmux/plugins/**
+

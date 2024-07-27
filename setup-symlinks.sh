@@ -23,9 +23,12 @@ mkdir $HOME/.config
 # Make sure atuin is gone
 rm -Rf $HOME/.config/atuin
 
-
 for config_item in ${ZPREZTO_HOME}/.config/**
 do
     rm -RI "$HOME/.config/$(basename "${config_item}")"
     ln -s $config_item $HOME/.config
 done
+
+ln -s /Users/smbayer/.zprezto/.config/tmux/.tmux.conf ${HOME}/.tmux.conf
+ln -s /Users/smbayer/.zprezto/.config/tmux/.tmux.conf.local ${HOME}/.tmux.conf.local
+
