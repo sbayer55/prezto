@@ -17,6 +17,8 @@ create-symlink ${ZPREZTO_HOME}/runcoms/zprofile ${HOME}/.zprofile
 create-symlink ${ZPREZTO_HOME}/runcoms/zshenv ${HOME}/.zshenv
 create-symlink ${ZPREZTO_HOME}/runcoms/zshrc ${HOME}/.zshrc
 create-symlink ${ZPREZTO_HOME}/.tmux.conf ${HOME}/.tmux.conf
+create-symlink ${ZPREZTO_HOME}/.tmux.conf.local ${HOME}/.tmux.conf.local
+create-symlink ${ZPREZTO_HOME}/.tmux ${HOME}/.tmux
 
 mkdir $HOME/.config
 
@@ -28,7 +30,4 @@ do
     rm -RI "$HOME/.config/$(basename "${config_item}")"
     ln -s $config_item $HOME/.config
 done
-
-ln -s /Users/smbayer/.zprezto/.config/tmux/.tmux.conf ${HOME}/.tmux.conf
-ln -s /Users/smbayer/.zprezto/.config/tmux/.tmux.conf.local ${HOME}/.tmux.conf.local
 
