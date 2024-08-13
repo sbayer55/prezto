@@ -82,12 +82,6 @@ if [[ -s "/usr/local/aws-cli/v2/current/bin" ]]; then
     export PATH="/usr/local/aws-cli/v2/current/bin:$PATH"
 fi
 
-if command -v "brew" > /dev/null && [[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-    source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-elif [[ -f "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-    source "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
-fi
-
 export EDITOR=vim
 export VISUAL=vim
 
@@ -170,102 +164,6 @@ function nvm-init () {
     nvm current
 }
 
-
-# ---- zoxide -----
-
-eval "$(zoxide init --cmd 'cd' zsh)"
-
-# ---- FZF -----
-
-# --- setup fzf theme ---
-fg="#CBE0F0"
-bg="#011628"
-bg_highlight="#143652"
-purple="#B388FF"
-blue="#06BCE4"
-cyan="#2CF9ED"
-
-export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${bg_highlight},hl+:${purple},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
-
-# -- Use fd instead of fzf --
-
-export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
-
-# Use fd (https://github.com/sharkdp/fd) for listing path candidates.
-# - The first argument to the function ($1) is the base path to start traversal
-# - See the source code (completion.{bash,zsh}) for the details.
-_fzf_compgen_path() {
-  fd --hidden --exclude .git . "$1"
-}
-
-# Use fd to generate the list for directory completion
-_fzf_compgen_dir() {
-  fd --type=d --hidden --exclude .git . "$1"
-}
-
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/fzf-git.sh" ]]; then
-    source "${ZDOTDIR:-$HOME}/.zprezto/fzf-git.sh"
-fi
-
-export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
-export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
-
-# Advanced customization of fzf options via _fzf_comprun function
-# - The first argument to the function is the name of the command.
-# - You should make sure to pass the rest of the arguments to fzf.
-_fzf_comprun() {
-  local command=$1
-  shift
-
-  case "$command" in
-    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-    export|unset) fzf --preview "eval 'echo \$'{}"         "$@" ;;
-    ssh)          fzf --preview 'dig {}'                   "$@" ;;
-    *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
-  esac
-}
-
-function fzf-keybinds() {
-    echo "Files                         <󰘴> g <󰘴> F"
-    echo "Branches                      <󰘴> g <󰘴> B"
-    echo "Tags                          <󰘴> g <󰘴> T"
-    echo "Remotes                       <󰘴> g <󰘴> R"
-    echo "commit Hashes                 <󰘴> g <󰘴> H"
-    echo "Stashes                       <󰘴> g <󰘴> S"
-    echo "reflogs                       <󰘴> g <󰘴> L"
-    echo "Worktrees                     <󰘴> g <󰘴> W"
-    echo "Each ref (git for-each-ref)   <󰘴> g <󰘴> E"
-}
-
-# ----- Bat (better cat) -----
-
-alias cat="bat"
-
-# ---- Eza (better ls) -----
-
-# --color-scale, --colour-scale
-#   highlight levels of field distinctly.  Use comma(,) separated list of all, age, size
-alias ls="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=fixed --no-time --no-user --no-permissions"
-alias ll="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=fixed --time-style=relative --group-directories-first"
-alias la="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=fixed --time-style=relative --group-directories-first --all"
-alias lt="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=gradient --color-scale=age --no-time --tree --level 2"
-
-# ---- Jump -----
-
-[[ -s "${HOME}/.autojump/etc/profile.d/autojump.sh" ]] && source "${HOME}/.autojump/etc/profile.d/autojump.sh"
-autoload -U compinit && compinit -u
-
-# ---- atuin (command history) -----
-if type "atuin" > /dev/null
-then
-    eval "$(atuin init zsh)"
-    eval "$(atuin gen-completions --shell zsh)"
-else
-    echo "!!! atuin not found !!!"
-fi
-
 # ----- pyenv -----
 # export PYENV_ROOT="$HOME/.pyenv"
 # [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
@@ -273,8 +171,6 @@ fi
 
 # Load pyenv-virtualenv automatically by adding
 # eval "$(pyenv virtualenv-init -)"
-
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 function iterm-help () {
     echo "DevDesktop:                    <󰘴-󰘳> a"
@@ -315,20 +211,3 @@ function lvim-help () {
     echo "<S-\`> - Open terminal"
     echo "    or :terminal"
 }
-
-# iTerm tips
-blue_blink='\033[34;5m'
-no_color='\033[0m'
-printf "%b ___   _______  _______  ______    __   __ %b\n" "${blue_blink}" "${no_color}"
-printf "%b|   | |       ||       ||    _ |  |  |_|  |%b\n" "${blue_blink}" "${no_color}"
-printf "%b|   | |_     _||    ___||   | ||  |       |%b\n" "${blue_blink}" "${no_color}"
-printf "%b|   |   |   |  |   |___ |   |_||_ |       |%b\n" "${blue_blink}" "${no_color}"
-printf "%b|   |   |   |  |    ___||    __  ||       |%b\n" "${blue_blink}" "${no_color}"
-printf "%b|   |   |   |  |   |___ |   |  | || ||_|| |%b\n" "${blue_blink}" "${no_color}"
-printf "%b|___|   |___|  |_______||___|  |_||_|   |_|%b\n" "${blue_blink}" "${no_color}"
-echo ""
-
-# if you wish to use IMDS set AWS_EC2_METADATA_DISABLED=false
-
-export AWS_EC2_METADATA_DISABLED=true
-
