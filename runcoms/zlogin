@@ -120,7 +120,24 @@ autoload -U compinit && compinit -u
 # ---- atuin (command history) -----
 if type "atuin" > /dev/null
 then
-    eval "$(atuin init zsh)"
+    eval "$(atuin init zsh --disable-up-arrow)"
+    # bindkey '^a' atuin-up-search
+    function atuin-strict-search () {
+        # --cmd-only \
+        # --filter-mode possible values: global, host, session, directory, workspace
+        # --format <FORMAT>
+        #   Available variables: {command}, {directory}, {duration}, {user}, {host}, {time}, {exit} and {relativetime}.
+        #   Example: --format "{time} - [{duration}] - {directory}$\t{command}"
+      atuin search \
+        --interactive \
+        --exit 0 \
+        --inline-height 30 \
+        --filter-mode 'global' \
+        --human
+
+    }
+    zle -N atuin-strict-search
+    bindkey '^a' atuin-strict-search
     eval "$(atuin gen-completions --shell zsh)"
 else
     echo "!!! atuin not found !!!"
