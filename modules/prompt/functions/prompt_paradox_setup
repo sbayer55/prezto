@@ -53,6 +53,10 @@ function has_aws_access_var {
   # print ""
 }
 
+function prompt_paradox_build_rprompt {
+  print -n "${HOST}"
+}
+
 function prompt_paradox_build_prompt {
 #  prompt_paradox_start_segment black default '%(?::%F{red}✘ )%(!:%F{yellow}⚡ :)%(1j:%F{cyan}⚙ :)%F{blue}%n$(has_aws_access_var)'
   prompt_paradox_start_segment black default '%(?::%F{red}✘ )%(!:%F{yellow}⚡ :)%(1j:%F{cyan}⚙ :)%F{blue}'
@@ -107,6 +111,8 @@ function prompt_paradox_precmd {
 
   # Calculate and print the elapsed time.
   prompt_paradox_print_elapsed_time
+
+  _host="${HOST}"
 }
 
 function prompt_paradox_preexec {
@@ -209,6 +215,7 @@ function prompt_paradox_setup {
 ${(e)$(prompt_paradox_build_prompt)}
  ${editor_info[keymap]} '
   # RPROMPT='%F{blue}[%F{green}%D{%H:%M:%S}%F{blue}]%f'
+  RPROMPT='%F{blue}[%F{green}%D{$(prompt_paradox_build_rprompt)}%F{blue}]%f'
   # Custom:
   # RPROMPT='$(get_rprompt)'
   SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '

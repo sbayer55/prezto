@@ -117,11 +117,9 @@ alias lt="eza --color=auto --long --git --no-filesize --icons=always --group-dir
 [[ -s "${HOME}/.autojump/etc/profile.d/autojump.sh" ]] && source "${HOME}/.autojump/etc/profile.d/autojump.sh"
 autoload -U compinit && compinit -u
 
-# ---- atuin (command history) -----
-if type "atuin" > /dev/null
-then
-    eval "$(atuin init zsh --disable-up-arrow)"
+function atuin-macro-setup () {
     # bindkey '^a' atuin-up-search
+    # Has some UI conflicts with current setup
     function atuin-strict-search () {
         # --cmd-only \
         # --filter-mode possible values: global, host, session, directory, workspace
@@ -133,11 +131,18 @@ then
         --exit 0 \
         --inline-height 30 \
         --filter-mode 'global' \
+        --search-mode 'fulltext' \
         --human
 
     }
     zle -N atuin-strict-search
     bindkey '^a' atuin-strict-search
+}
+
+# ---- atuin (command history) -----
+if type "atuin" > /dev/null
+then
+    eval "$(atuin init zsh --disable-up-arrow)"
     eval "$(atuin gen-completions --shell zsh)"
 else
     echo "!!! atuin not found !!!"
