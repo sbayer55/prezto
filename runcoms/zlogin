@@ -26,10 +26,13 @@ if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
   source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 fi
 
-if command -v "brew" > /dev/null && [[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-    source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-elif [[ -f "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-    source "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+# zsh-autosuggestions is not compatable with amazon-q
+if ! [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
+  if command -v "brew" > /dev/null && [[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+      source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  elif [[ -f "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
+      source "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+  fi
 fi
 
 # ---- zoxide -----

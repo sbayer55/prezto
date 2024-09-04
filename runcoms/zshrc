@@ -1,10 +1,7 @@
 # Amazon Q pre block. Keep at the top of this file.
 if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
-    # echo "\n<< start zshrc >>\n"
-    echo -n "zshrc 🌞 🛫.."
     if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]]; then
         builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
-        echo "..🛬 🌞 zshrc"
     fi
 fi
 
@@ -234,10 +231,7 @@ function lvim-help () {
 
 # Amazon Q post block. Keep at the bottom of this file.
 if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
-    echo -n "zshrc 🪙 🛫.."
     if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]]; then
         builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
-        echo "..🛬 🪙 zshrc"
     fi
-    # echo "\n<< end zshrc >>\n"
 fi

@@ -42,13 +42,17 @@ zstyle ':prezto:load' pmodule \
 # 'history-substring-search'
 
 
-#
-# Autosuggestions
-#
-zstyle ':prezto:module:autosuggestions' color 'yes'
 
-# Set the query found color.
-zstyle ':prezto:module:autosuggestions:color' found ''
+# zsh-autosuggestions is not compatable with amazon-q
+if ! [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
+  #
+  # Autosuggestions
+  #
+  zstyle ':prezto:module:autosuggestions' color 'yes'
+
+  # Set the query found color.
+  zstyle ':prezto:module:autosuggestions:color' found ''
+fi
 
 #
 # Completions
