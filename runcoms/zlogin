@@ -142,10 +142,29 @@ function atuin-macro-setup () {
 # ---- atuin (command history) -----
 if type "atuin" > /dev/null
 then
-    eval "$(atuin init zsh --disable-up-arrow)"
+    eval "$(atuin init zsh)"
+    # eval "$(atuin init zsh --disable-up-arrow)"
     eval "$(atuin gen-completions --shell zsh)"
 else
     echo "!!! atuin not found !!!"
 fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# ---- pipx autocomplete -----
+# Maybe delete for Q?
+if type "pipx" > /dev/null && type "register-python-argcomplete" > /dev/null
+then
+    autoload -U compinit && compinit
+    # I might not need this:
+    # autoload -U bashcompinit
+    # bashcompinit
+    eval "$(register-python-argcomplete pipx)"
+fi
+
+if [ -d "$HOME/.pyenv" ]
+then
+    export PYENV_ROOT="$HOME/.pyenv"
+    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+fi

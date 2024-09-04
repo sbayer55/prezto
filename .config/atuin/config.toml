@@ -104,9 +104,9 @@ show_preview = true
 #   "^secret-cmd",
 #   "^innocuous-cmd .*--secret=.+",
 # ]
-# history_filter = [
-#   ".*AWS_SECRET_ACCESS_KEY.*",
-# ]
+history_filter = [
+  ".*AWS_SECRET_ACCESS_KEY.*", ".*AWS_SECRET_ACCESS_KEY.*", ".*__jetbrains_intellij_run_generator.*"
+]
 
 ## prevent commands run with cwd matching any of these regexes from being written
 ## to history. Note that these regular expressions are unanchored, i.e. if they don't
@@ -222,10 +222,11 @@ common_subcommands = [
   "yarn",
   "brazil",
   "cd",
+  "aws",
 ]
 
 ## Set commands that should be totally stripped and ignored from stats
-# common_prefix = ["sudo"]
+common_prefix = ["sudo", "__jetbrains_intellij_run_generato"]
 
 ## Set commands that will be completely ignored from stats
 # ignored_commands = [

@@ -1,3 +1,13 @@
+# Amazon Q pre block. Keep at the top of this file.
+if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
+    # echo "\n<< start zprofile >>\n"
+    echo -n "zprofile 🌞 🛫.."
+    if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.pre.zsh" ]]; then
+        builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.pre.zsh"
+        echo "..🛬 🌞 zprofile"
+    fi
+fi
+
 #
 # Executes commands at login pre-zshrc.
 #
@@ -71,3 +81,13 @@ fi
 # The original version is saved in .zprofile.pysave
 PATH="/Library/Frameworks/Python.framework/Versions/3.10/bin:${PATH}"
 export PATH
+
+# Amazon Q post block. Keep at the bottom of this file.
+if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
+    echo -n "zprofile 🪙 🛫.."
+    if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh" ]]; then
+        builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh"
+        echo "..🛬 🪙 zprofile"
+    fi
+  # echo "\n<< end zprofile >>\n"
+fi

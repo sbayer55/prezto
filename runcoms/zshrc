@@ -1,3 +1,23 @@
+# Amazon Q pre block. Keep at the top of this file.
+if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
+    # echo "\n<< start zshrc >>\n"
+    echo -n "zshrc 🌞 🛫.."
+    if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]]; then
+        builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+        echo "..🛬 🌞 zshrc"
+    fi
+fi
+
+# 1. Amazon Q will add one line to the top and bottom of the following files (if they exist):
+#     .zshrc
+#     .zprofile
+#     .bashrc
+#     .bash_profile
+#     .profile
+# 2. Your dotfiles will be backed up to
+#     ~/.amazon-q.dotfiles.bak/
+# 3. Uninstalling Amazon Q will remove these lines.
+
 # Source Prezto.
 
 # Profile Prezto startup. Use "zprof" to print results.
@@ -211,3 +231,13 @@ function lvim-help () {
     echo "<S-\`> - Open terminal"
     echo "    or :terminal"
 }
+
+# Amazon Q post block. Keep at the bottom of this file.
+if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
+    echo -n "zshrc 🪙 🛫.."
+    if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]]; then
+        builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+        echo "..🛬 🪙 zshrc"
+    fi
+    # echo "\n<< end zshrc >>\n"
+fi

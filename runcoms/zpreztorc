@@ -36,8 +36,11 @@ zstyle ':prezto:load' pmodule \
   'completion' \
 	'git' \
 	'syntax-highlighting' \
-	'history-substring-search' \
   'prompt'
+
+# Add this to module load to get default up arrow search
+# 'history-substring-search'
+
 
 #
 # Autosuggestions
