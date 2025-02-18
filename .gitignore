@@ -7,4 +7,6 @@ runcoms/amazonrc
 */lazy-lock.json
 .idea
 .config/tmux/plugins/**
+.config/htop/*.tmp.*
+.config/htop/htoprc
 

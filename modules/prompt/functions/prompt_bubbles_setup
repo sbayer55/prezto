@@ -128,28 +128,25 @@ function prompt_bubbles_precmd {
 
   _host="${HOST}"
 
-  PS2=""
+  # Here is the colors:
+  # https://www.manpagez.com/man/1/zshmisc/
+#   PS2=""
 
-  # no work
-  if [[ -n "$git_info" ]]; then
-#    PS2="gg"
-    # shellcheck disable=SC2296
-    local stuff="${(e)git_info[ref]}${(e)git_info[status]}"
-    local stuff_bubble="$(bubble "${stuff}" "${bubble_green}" "${bubble_red}")"
+#   # no work
+#   if [[ -n "$git_info" ]]; then
+# #    PS2="gg"
+#     # shellcheck disable=SC2296
+#     local stuff="${(e)git_info[ref]}${(e)git_info[status]}"
+# #    local stuff_bubble="$(bubble "${stuff}" "${bubble_green}" "${bubble_red}")"
 
-    local len1=${#stuff_bubble}
-    local len2=${#stuff}
+#     PS2="$stuff"
 
-    local diff=$((len1 - len2))
-
-    PS2="$stuff_bubble"
-
-    if [[ $diff -gt 0 ]]; then
-      for ((i=0; i<diff; i++)); do
-        PS2+="$(printf "%b" "\033[1D")"
-      done
-    fi
-  fi
+# #    if [[ $diff -gt 0 ]]; then
+# #      for ((i=0; i<diff; i++)); do
+# #        PS2+="$(printf "%b" "\033[1D")"
+# #      done
+# #    fi
+#   fi
 }
 
 function prompt_bubbles_preexec {
@@ -258,7 +255,7 @@ function prompt_bubbles_setup {
   zstyle ':prezto:module:editor:info:completing' format '%B%F{red}...%f%b'
   zstyle ':prezto:module:editor:info:keymap:primary' format '%B%F{blue}❯%f%b'
   zstyle ':prezto:module:editor:info:keymap:primary:overwrite' format '%F{red}♺%f'
-  zstyle ':prezto:module:editor:info:keymap:alternate' format '%B%F{red}[alternate]%f%b'
+  zstyle ':prezto:module:editor:info:keymap:alternate' format '%B%F{red}[vicmd]%f%b'
 
   # Set git-info parameters.
   zstyle ':prezto:module:git:info' verbose 'yes'

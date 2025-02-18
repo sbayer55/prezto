@@ -18,8 +18,9 @@
 if (( $+commands[fortune] )); then
   if [[ -t 0 || -t 1 ]]; then
     fortune -s
-    print
   fi
+elif [[ -f "${HOME}/.zprezto/scripts/random-quote.sh" ]]; then
+  source "${HOME}/.zprezto/scripts/random-quote.sh"
 fi
 
 if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
@@ -104,7 +105,7 @@ function fzf-keybinds() {
 
 # ----- Bat (better cat) -----
 
-alias cat="bat"
+alias cat="bat -P"
 
 # ---- Eza (better ls) -----
 
@@ -120,6 +121,9 @@ alias lt="eza --color=auto --long --git --no-filesize --icons=always --group-dir
 [[ -s "${HOME}/.autojump/etc/profile.d/autojump.sh" ]] && source "${HOME}/.autojump/etc/profile.d/autojump.sh"
 autoload -U compinit && compinit -u
 
+# ---- atuin -----
+
+# Not working
 function atuin-macro-setup () {
     # bindkey '^a' atuin-up-search
     # Has some UI conflicts with current setup
@@ -148,8 +152,6 @@ then
     eval "$(atuin init zsh)"
     # eval "$(atuin init zsh --disable-up-arrow)"
     eval "$(atuin gen-completions --shell zsh)"
-else
-    echo "!!! atuin not found !!!"
 fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"

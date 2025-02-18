@@ -43,7 +43,7 @@ if [[ "x${input}" == "x" ]]; then
 fi
 
 if [[ "${input}" == "yes" ]]; then
-    LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
+    LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.4/neovim-0.9/utils/installer/install.sh)
 fi
 
 echo "Run brew install? (yes/no [yes])"

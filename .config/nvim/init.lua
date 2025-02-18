@@ -245,7 +245,7 @@ vim.keymap.set({'n', 'i'}, '<C-j>', '<Cmd>HopWord<CR>')
 -- Normal p = put after current line
 -- Normal P = put before the current line
 
-vim.o.foldenable = true
+vim.o.foldenable = false
 vim.o.foldmethod = 'syntax'
 vim.o.foldlevel = 1
 vim.o.foldlevelstart = 1
