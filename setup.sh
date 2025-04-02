@@ -1,7 +1,14 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 # enable script debugging
 set -x
+
+# Set colors for better readability
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly RED='\033[0;31m'
+readonly BLUE='\033[0;34m'
+readonly NC='\033[0m' # No Color
 
 ZPREZTO_HOME=${HOME}/.zprezto
 
@@ -16,76 +23,30 @@ git submodule update --init --recursive
 
 chsh -s /bin/zsh
 
-source "${ZPREZTO_HOME}/setup-symlinks.sh"
+eval "${ZPREZTO_HOME}/setup-symlinks.sh"
 
 # Register "$(bat --config-dir)/themes" with bat
 bat cache --build
 
 git clone https://github.com/tmux-plugins/tpm ${HOME}/.tmux/plugins/tpm
 
-# echo "Install VIM profile? (yes/no [yes])"
-# read input
+echo -e "${YELLOW}Install Lunar Vim profile? [Y/n]${NC}"
+read -r input
 
-# if [[ "x${input}" == "x" ]]; then
-#     input="yes"
-# fi
-
-# if [[ "${input}" == "yes" ]]; then
-#     cv ${ZPREZTO_HOME}/vim
-#     ./vim_setup.sh
-# fi
-
-echo "Install Lunar Vim profile? (yes/no [yes])"
-read input
-
-if [[ "x${input}" == "x" ]]; then
-    input="yes"
-fi
-
-if [[ "${input}" == "yes" ]]; then
+if [[ -z "$input" || "$input" =~ ^[Yy]$ ]]; then
     LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.4/neovim-0.9/utils/installer/install.sh)
 fi
 
-echo "Run brew install? (yes/no [yes])"
-read input
+eval "${ZPREZTO_HOME}/scripts/install-brew-packages.sh"
+eval "${ZPREZTO_HOME}/scripts/install-cargo.sh"
+eval "${ZPREZTO_HOME}/scripts/install-crates.sh"
 
-if [[ "x${input}" == "x" ]]; then
-    input="yes"
-fi
+# git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
 
-if [[ "${input}" == "yes" ]]; then
-    if type brew; then
-        brew analytics off
-        brew install midnight-commander wget git-delta fd eza bat ollama fish tree htop gnupg neovim ripgrep jq fzf zoxide btop bottom atuin zsh-autosuggestions
-    else
-        echo "Attempting cargo install"
-        if ! type cargo; then
-            if type yum; then
-                sudo yum install cargo
-            fi
-        fi
-        if type cargo; then
-            cargo install atuin
-            cargo install eza
-            cargo install git-delta
-        else
-            echo "Cargo install failed"
-        fi
+echo -e "${YELLOW}Install Starship? [Y/n]${NC}"
+read -r input
 
-        # https://github.com/zsh-users/zsh-autosuggestions
-        git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
-    fi
-fi
-
-echo "Install Starship? (yes/no [yes])"
-read input
-
-if [[ "x${input}" == "x" ]]; then
-    input="yes"
-fi
-
-if [[ "${input}" == "yes" ]]; then
+if [[ -z "$input" || "$input" =~ ^[Yy]$ ]]; then
     # Need OS check
     curl -sS https://starship.rs/install.sh | shi
 fi
-

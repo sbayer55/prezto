@@ -1,0 +1,142 @@
+# Configuration for Alacritty, the GPU enhanced terminal emulator.
+
+# Any items in the `env` entry below will be added as
+# environment variables. Some entries may override variables
+# set by alacritty itself.
+env:
+  # TERM variable
+  TERM: xterm-256color
+  ALAC_DEBUG: "yaml file"
+
+window:
+  # Window dimensions (changes require restart)
+  dimensions:
+    columns: 120
+    lines: 35
+
+  # Window padding (changes require restart)
+  padding:
+    x: 10
+    y: 10
+
+  # Window decorations
+  decorations: full
+
+  # Window title
+  title: Alacritty
+
+  # Allow terminal applications to change Alacritty's window title.
+  dynamic_title: true
+
+scrolling:
+  # Maximum number of lines in the scrollback buffer.
+  history: 10000
+  
+  # Scrolling distance multiplier.
+  multiplier: 3
+
+# Font configuration
+font:
+  # Normal (roman) font face
+  normal:
+    family: JetBrainsMono Nerd Font
+    style: Regular
+
+  # Bold font face
+  bold:
+    family: JetBrainsMono Nerd Font
+    style: Bold
+
+  # Italic font face
+  italic:
+    family: JetBrainsMono Nerd Font
+    style: Italic
+
+  # Bold italic font face
+  bold_italic:
+    family: JetBrainsMono Nerd Font
+    style: Bold Italic
+
+  # Point size
+  size: 12.0
+
+  # Offset is the extra space around each character. `offset.y` can be thought of
+  # as modifying the line spacing, and `offset.x` as modifying the letter spacing.
+  offset:
+    x: 0
+    y: 0
+
+  # Glyph offset determines the locations of the glyphs within their cells with
+  # the default being at the bottom. Increasing `x` moves the glyph to the right,
+  # increasing `y` moves the glyph upwards.
+  glyph_offset:
+    x: 0
+    y: 0
+
+# If `true`, bold text is drawn using the bright color variants.
+draw_bold_text_with_bright_colors: true
+
+# Colors (Monokai Pro)
+colors:
+  # Default colors
+  primary:
+    background: '#2D2A2E'
+    foreground: '#FCFCFA'
+
+  # Normal colors
+  normal:
+    black:   '#403E41'
+    red:     '#FF6188'
+    green:   '#A9DC76'
+    yellow:  '#FFD866'
+    blue:    '#FC9867'
+    magenta: '#AB9DF2'
+    cyan:    '#78DCE8'
+    white:   '#FCFCFA'
+
+  # Bright colors
+  bright:
+    black:   '#727072'
+    red:     '#FF6188'
+    green:   '#A9DC76'
+    yellow:  '#FFD866'
+    blue:    '#FC9867'
+    magenta: '#AB9DF2'
+    cyan:    '#78DCE8'
+    white:   '#FCFCFA'
+
+cursor:
+  # Cursor style
+  style:
+    shape: Block
+    blinking: On
+
+  # Vi mode cursor style
+  vi_mode_style: None
+
+  # Cursor blinking interval in milliseconds.
+  blink_interval: 750
+
+  # If this is `true`, the cursor will be rendered as a hollow box when the
+  # window is not focused.
+  unfocused_hollow: true
+
+# Live config reload (changes require restart)
+live_config_reload: true
+
+# Shell
+shell:
+  program: /usr/bin/zsh
+  args:
+    - --login
+
+# Key bindings
+key_bindings:
+  - { key: V,        mods: Control|Shift, action: Paste            }
+  - { key: C,        mods: Control|Shift, action: Copy             }
+  - { key: Insert,   mods: Shift,         action: PasteSelection   }
+  - { key: Key0,     mods: Control,       action: ResetFontSize    }
+  - { key: Equals,   mods: Control,       action: IncreaseFontSize }
+  - { key: Plus,     mods: Control,       action: IncreaseFontSize }
+  - { key: Minus,    mods: Control,       action: DecreaseFontSize }
+  - { key: F11,      mods: None,          action: ToggleFullscreen }
