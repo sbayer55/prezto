@@ -37,9 +37,7 @@ if [[ -z "$input" || "$input" =~ ^[Yy]$ ]]; then
     LV_BRANCH='release-1.4/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.4/neovim-0.9/utils/installer/install.sh)
 fi
 
-eval "${ZPREZTO_HOME}/scripts/install-brew-packages.sh"
-eval "${ZPREZTO_HOME}/scripts/install-cargo.sh"
-eval "${ZPREZTO_HOME}/scripts/install-crates.sh"
+eval "${ZPREZTO_HOME}/scripts/install-dev-tools.sh"
 
 # git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
 
