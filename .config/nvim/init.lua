@@ -42,8 +42,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Tab navigation keybindings
-vim.api.nvim_set_keymap('n', '[', ':tabprevious<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', ']', ':tabnext<CR>', { noremap = true, silent = true })
+-- Overlays with which-key
+-- vim.api.nvim_set_keymap('n', '[', ':tabprevious<CR>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('n', ']', ':tabnext<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>tn', ':tabnew<CR>', { noremap = true, silent = true, desc = "New tab" })
 
 -- Plugin specifications
@@ -75,19 +76,24 @@ require("lazy").setup({
           border = "single",
           position = "bottom",
         },
+        disable = {
+          buftypes = {},
+          filetypes = {},
+        },
+        hidden = { "<silent>", "<cmd>", "<Cmd>", "<CR>", "call", "lua", "^:", "^ " },
       })
       
       -- Register group names for better organization
       local wk = require("which-key")
       wk.register({
-        f = { name = "Find/Files" },
-        b = { name = "Buffers" },
-        c = { name = "Code" },
-        g = { name = "Git" },
-        l = { name = "LSP" },
-        t = { name = "Tabs/Toggle" },
-        s = { name = "Search/Symbol" },
-      }, { prefix = "<leader>" })
+        ["<leader>f"] = { name = "Find/Files" },
+        ["<leader>b"] = { name = "Buffers" },
+        ["<leader>c"] = { name = "Code" },
+        ["<leader>g"] = { name = "Git" },
+        ["<leader>l"] = { name = "LSP" },
+        ["<leader>t"] = { name = "Tabs/Toggle" },
+        ["<leader>s"] = { name = "Search/Symbol" },
+      })
     end,
   },
 

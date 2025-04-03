@@ -2,44 +2,45 @@
 # Executes commands at login post-zshrc.
 #
 
-# Enable zsh debugging
-setopt XTRACE
-setopt VERBOSE
-PS4='+%N:%i> '
-exec 2>> "${HOME}/zsh-debug.log"
+# Enable zsh debugging if toggle is on
+if [[ "${ZSH_DEBUG}" == "true" ]]; then
+    setopt XTRACE
+    setopt VERBOSE
+    PS4='+%N:%i> '
+fi
 
 # Helper function to safely source files
 function source_if_exists() {
     local file="${1}"
     local shell="${SHELL##*/}"
-    local source_file="zlogin"
+    local source_file="${0}"
     
     # Skip if file doesn't exist
     if [[ ! -s "${file}" ]]; then
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] File does not exist or is empty: ${file}"
+        [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] File does not exist or is empty: ${file}"
         return
     fi
     
     # Handle shell-specific files
     if [[ "${file}" == *.zsh ]]; then
         [[ "${shell}" == "zsh" ]] && {
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing zsh file: ${file}"
+            [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing zsh file: ${file}"
             if ! (source "${file}"); then
-                echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source zsh file: ${file}"
+                [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source zsh file: ${file}"
             fi
         }
     elif [[ "${file}" == *.bash ]]; then
         [[ "${shell}" == "bash" ]] && {
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing bash file: ${file}"
+            [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing bash file: ${file}"
             if ! (source "${file}"); then
-                echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source bash file: ${file}"
+                [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source bash file: ${file}"
             fi
         }
     else
         # Source non-shell-specific files
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing file: ${file}"
+        [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing file: ${file}"
         if ! (source "${file}"); then
-            echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source file: ${file}"
+            [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source file: ${file}"
         fi
     fi
 }
@@ -64,8 +65,8 @@ fi
 # source_if_exists "${HOME}/.rvm/scripts/rvm"
 
 # ---- zoxide -----
-# eval "$(zoxide init zsh)"
-# alias cd='z'
+eval "$(zoxide init zsh)"
+alias cd='z'
 
 # ---- FZF -----
 
@@ -131,7 +132,9 @@ function fzf-keybinds() {
 
 # ----- Bat (better cat) -----
 
-alias cat="bat -P"
+if type "bat" > /dev/null; then
+    alias cat="bat -P"
+fi
 
 # ---- Eza (better ls) -----
 
