@@ -1,106 +1,99 @@
-# Amazon Q pre block. Keep at the top of this file.
-if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
-    if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]]; then
-        builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
-    fi
-fi
-
-# 1. Amazon Q will add one line to the top and bottom of the following files (if they exist):
-#     .zshrc
-#     .zprofile
-#     .bashrc
-#     .bash_profile
-#     .profile
-# 2. Your dotfiles will be backed up to
-#     ~/.amazon-q.dotfiles.bak/
-# 3. Uninstalling Amazon Q will remove these lines.
-
 # Source Prezto.
 
 # Profile Prezto startup. Use "zprof" to print results.
 # zmodload zsh/zprof
 
+# Enable zsh debugging
+setopt XTRACE
+setopt VERBOSE
+PS4='+%N:%i> '
+exec 2>> "${HOME}/zsh-debug.log"
+
 export ZPREZTO_HOME=${HOME}/.zprezto
+source "${ZDOTDIR:-${HOME}}/.zprezto/init.zsh"
 
-# Prefix PATH
-export PATH="/opt/homebrew/Cellar/ruby/3.3.0/bin:$PATH"
-export PATH="$HOME/code/bin/commands:${PATH}"
-export PATH="$HOME/code/bin/tools:${PATH}"
-export PATH="$HOME/code/bin:${PATH}"
-export PATH="$HOME/Library/Application Support/JetBrains/Toolbox/scripts:${PATH}"
-export PATH="/opt/homebrew/bin:${PATH}"
-export PATH="/usr/local/opt/curl/bin:$PATH"
-export PATH="${HOME}/.local/bin:${PATH}"
-export PATH="/opt/homebrew/opt/postgresql@16/bin:${PATH}"
-export PATH="/opt/homebrew/Cellar/ruby/3.3.0/bin:${PATH}"
+# Helper function to safely add paths
+function add_to_path() {
+    local dir="${1}"
+    if [[ -d "${dir}" && ":${PATH}:" != *":${dir}:"* ]]; then
+        export PATH="${dir}:${PATH}"
+    fi
+}
 
-# Suffix PATH
-export PATH="$PATH:$HOME/.toolbox/bin"
-export PATH="$PATH:$HOME/.rvm/bin"
+# Helper function to safely source files
+function source_if_exists() {
+    local file="${1}"
+    local shell="${SHELL##*/}"
+    local source_file="zlogin"
+    
+    # Skip if file doesn't exist
+    if [[ ! -s "${file}" ]]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] File does not exist or is empty: ${file}"
+        return
+    fi
+    
+    # Handle shell-specific files
+    if [[ "${file}" == *.zsh ]]; then
+        [[ "${shell}" == "zsh" ]] && {
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing zsh file: ${file}"
+            if ! (source "${file}"); then
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source zsh file: ${file}"
+            fi
+        }
+    elif [[ "${file}" == *.bash ]]; then
+        [[ "${shell}" == "bash" ]] && {
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing bash file: ${file}"
+            if ! (source "${file}"); then
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source bash file: ${file}"
+            fi
+        }
+    else
+        # Source non-shell-specific files
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing file: ${file}"
+        if ! (source "${file}"); then
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source file: ${file}"
+        fi
+    fi
+}
 
+# Add directories to PATH
+add_to_path "/opt/homebrew/Cellar/ruby/3.3.0/bin"
+add_to_path "${HOME}/code/bin/commands"
+add_to_path "${HOME}/code/bin/tools"
+add_to_path "${HOME}/code/bin"
+add_to_path "${HOME}/Library/Application Support/JetBrains/Toolbox/scripts"
+add_to_path "/opt/homebrew/bin"
+add_to_path "/usr/local/opt/curl/bin"
+add_to_path "${HOME}/.local/bin"
+add_to_path "/opt/homebrew/opt/postgresql@16/bin"
+add_to_path "${HOME}/.toolbox/bin"
+add_to_path "${HOME}/.rvm/bin"
+add_to_path "${HOME}/.cargo/bin"
+add_to_path "/usr/local/aws-cli/v2/current/bin"
+add_to_path "${HOME}/apache-maven-3.9.6/bin"
+add_to_path "/usr/local/opt/ruby@2.7/bin"
+
+# Python path handling
 if [[ -s "/opt/homebrew/opt/python@3.12/bin" ]]; then
-    export PATH="/opt/homebrew/opt/python@3.12/bin:$PATH"
+    add_to_path "/opt/homebrew/opt/python@3.12/bin"
 elif [[ -s "/opt/python3/bin/python3" ]]; then
-    export PATH="/opt/python3/bin:$PATH"
+    add_to_path "/opt/python3/bin"
 fi
 
-# Enable zprezto
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-    source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-fi
-
-# if type starship; then
-#     eval "$(starship init zsh)"
-# fi
-
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc" ]]; then
-    source "${ZDOTDIR:-$HOME}/.zprezto/runcoms/amazonrc"
-fi
+# Source configuration files
+source_if_exists "${ZDOTDIR:-${HOME}}/.zprezto/runcoms/amazonrc"
+source_if_exists "${HOME}/.fzf.zsh"
+source_if_exists "${HOME}/.iterm2_shell_integration.bash"
+source_if_exists "${HOME}/.iterm2_shell_integration.zsh"
 
 # Java 21
-if [[ -s "$HOME/.jdks/corretto-21.0.2/bin/java" ]]; then
-    export JAVA_HOME="$HOME/.jdks/corretto-21.0.2/bin"
-    export PATH="$HOME/.jdks/corretto-21.0.2/bin:$PATH"
+if [[ -s "${HOME}/.jdks/corretto-21.0.2/bin/java" ]]; then
+    export JAVA_HOME="${HOME}/.jdks/corretto-21.0.2/bin"
+    add_to_path "${HOME}/.jdks/corretto-21.0.2/bin"
 fi
 
-# Maven
-if [[ -s "$HOME/apache-maven-3.9.6/bin/mvn" ]]; then
-    export PATH="$HOME/apache-maven-3.9.6/bin:$PATH"
-fi
-
-# toolbox
-if [[ -s "$HOME/.toolbox/bin" ]]; then
-    export PATH="$HOME/.toolbox/bin:$PATH"
-fi
-
-# Ruby 2.7
-if [[ -s "/usr/local/opt/ruby@2.7/bin" ]]; then
-    export PATH="/usr/local/opt/ruby@2.7/bin"
-fi
-
-if [[ -f "${HOME}/.fzf.zsh" ]]; then
-    source "${HOME}/.fzf.zsh"
-fi
-
-# iTerm
-if [[ -s "${HOME}/.iterm2_shell_integration.bash" ]]; then
-    source "${HOME}/.iterm2_shell_integration.bash"
-elif [[ -s "${HOME}/.iterm2_shell_integration.zsh" ]]; then
-    source "${HOME}/.iterm2_shell_integration.zsh"
-fi
-
-# Cargo
-if [[ -s "$HOME/.cargo/bin" ]]; then
-    export PATH="$HOME/.cargo/bin:$PATH"
-fi
-
-# If newer AWS CLI installed
-if [[ -s "/usr/local/aws-cli/v2/current/bin" ]]; then
-    export PATH="/usr/local/aws-cli/v2/current/bin:$PATH"
-fi
-
-export EDITOR=vim
-export VISUAL=vim
+export EDITOR=nvim
+export VISUAL=nvim
 
 # OS defaults
 alias "grep"="grep --color=auto"
@@ -109,14 +102,14 @@ alias "echo"="echo -e"
 alias "beep"="echo -ne '\\007'"
 
 # Misc
-alias "java-version"="source $HOME/code/bin/java-version.sh"
+alias "java-version"="source ${HOME}/code/bin/java-version.sh"
 alias "start-postgres"='LC_ALL="C" /opt/homebrew/opt/postgresql@16/bin/postgres -D /opt/homebrew/var/postgresql@16'
 alias "rails"='gem exec rails'
 alias "python"="python3"
 alias "kill-grep"="ps -aux | grep -i "
 
 # MacOS start steam using game toolkit (Apples fork of wine)
-alias "win-steam"="gameportingtoolkit ~/steam-wine 'C:\\Program Files (x86)\\Steam\\steam.exe'"
+alias "win-steam"="gameportingtoolkit ${HOME}/steam-wine 'C:\\Program Files (x86)\\Steam\\steam.exe'"
 
 # Kubernetes
 alias "k"="kubectl"
@@ -124,47 +117,24 @@ alias "kgp"="kubectl get pods"
 alias "kpf"="kubectl port-forward"
 alias "kl"="kubectl logs"
 
-# Helpful git commands
-alias "git-log"="git log --pretty=oneline"
-alias "git-diff"="git diff --color-words"
-alias "git-file-diff"="git diff --no-index"
-alias "git-diff-staged"="git diff --staged"
-alias "git-diff-search"="git diff --color-words --word-diff-regex"
-alias "git-blame"="git blame --color-lines --color-by-age"
-alias "git-graph"="git log --oneline --decorate --all --graph"
-
 # Easy stop logictech process when mx devices stop working
 alias "kill-logi"="ps -A | grep -i 'Logitech' | grep -v 'grep' | awk '{ print \$1 }' | sudo xargs kill -9"
 
-function kill-xargs () {
-    if [[ -n "$1" ]]
-    then
-        # OG
-        # src https://stackoverflow.com/questions/8987037/how-to-kill-all-processes-with-a-given-partial-name
-        # ps -ef | grep 'myProcessName' | grep -v grep | awk '{print $2}' | xargs -r kill -9
-        ps -aux | grep -i "$1" | grep -v grep | awk '{print $2}' | xargs -r kill -9
-    else
-        echo "A process name must be specified"
-        echo "will run \`ps -aux | grep -i "\$1" | grep -v grep | awk '{print \$2}' | xargs -r kill -9\`"
+function kill-process () {
+    local PROCESS="${1}"
+    if [[ -z "${PROCESS}" ]]; then
+        echo "Usage: kill-process <process_name>"
+        return 1
     fi
+    ps -A | grep -i "${PROCESS}" | grep -v 'grep' | awk '{ print $1 }' | sudo xargs kill -9
 }
-
-function tmux-help () {
-    echo "tmux"
-    echo "tmux ls"
-    echo "tmux attach -d -t <session id>"
-    echo "To split a tmux session vertically <ctrl> + b, %"
-    echo "To split a tmux session horizontally <ctrl> + b, \""
-    echo "To move between panels use <ctrl> + b, <any arrow>"
-}
-
 
 # Docker
 alias "dc"="docker-compose"
 alias "rm-images"="docker images | awk 'NR!=1' | awk '{ print \$3 }' | xargs docker image rm"
 
 function docker-compose-restart () {
-    local WORKER=$1
+    local WORKER="${1}"
     echo "Restarting worker ${WORKER}"
     docker-compose stop ${WORKER}
     docker-compose build ${WORKER}
@@ -173,65 +143,12 @@ function docker-compose-restart () {
 }
 
 # NVM
-export NVM_DIR="$HOME/.nvm"
+export NVM_DIR="${HOME}/.nvm"
 function nvm-init () {
-    export NVM_DIR="$HOME/.nvm"
+    export NVM_DIR="${HOME}/.nvm"
     [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
     [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
     nvm current
 }
 
-# ----- pyenv -----
-# export PYENV_ROOT="$HOME/.pyenv"
-# [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-# eval "$(pyenv init -)"
-
-# Load pyenv-virtualenv automatically by adding
-# eval "$(pyenv virtualenv-init -)"
-
-function iterm-help () {
-    echo "DevDesktop:                    <󰘴-󰘳> a"
-    echo "Autocompletion:                <󰘳> ;"
-    echo "Toolbelt:                      <󰘶-󰘳> b"
-    echo "Edit Session:                  <󰘳> i"
-    echo "Timestamps:                    <󰘶-󰘳> e"
-    echo "Alert On Finish:               <󰘵-󰘳> a"
-    echo "Git History:                   <󰘳> g <󰘳> h"
-}
-
-function tmux-help () {
-    echo "Tmux Create Window:            <󰘴-b> c"
-    echo "Tmux Rename Window:            <󰘴-b> ,"
-    echo "Tmux Close Window:             <󰘴-b> &"
-    echo "Tmux List Window:              <󰘴-b> w"
-    echo "Tmux Previous Window:          <󰘴-b> p"
-    echo "Tmux Next Window:              <󰘴-b> n"
-    echo "Tmux Switch Window:            <󰘴-b> 0..9"
-    echo "Tmux Split Window Vertical:    <󰘴-b> %"
-    echo 'Tmux Split Window Horizontal:  <󰘴-b> "'
-    echo "Tmux Next Pane:                <󰘴-b> o"
-    echo "Tmux Show Pane Numbers:        <󰘴-b> p"
-    echo "Tmux Switch Pane:              <󰘴-b> q 0..9"
-    echo "Tmux Convert Pane To Window:   <󰘴-b> q 0..9"
-    echo "Tmux Close Pane:               <󰘴-b> x"
-}
-
-function lvim-help () {
-    echo "https://vimtricks.com/p/vim-code-folding/"
-    echo "za – Toggles the current fold open or closed. – The most useful command to know of all of these."
-    echo "zA – Same as za except it toggles all folds beneath as well. Since folds can be nested (such as with indent folding), this will toggle the state of all the folds underneath of it, not just the current fold."
-    echo "zc – Close the current fold."
-    echo "zC – Same as above, but closes folds nested underneath as well."
-    echo "zo – Open the current fold."
-    echo "zO – Same as above, but opens folds nested underneath as well."
-    echo "vimrc no fold: ':set nofoldenable'"
-    echo "<S-\`> - Open terminal"
-    echo "    or :terminal"
-}
-
-# Amazon Q post block. Keep at the bottom of this file.
-if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
-    if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]]; then
-        builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
-    fi
-fi
+echo "Final path: ${PATH}"

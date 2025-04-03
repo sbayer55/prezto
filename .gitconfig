@@ -1,0 +1,8 @@
+[alias]
+    log = log --pretty=oneline
+    diff = diff --color-words
+    file-diff = diff --no-index
+    diff-staged = diff --staged
+    diff-search = diff --color-words --word-diff-regex
+    blame = blame --color-lines --color-by-age
+    graph = log --oneline --decorate --all --graph 

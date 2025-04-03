@@ -1,16 +1,55 @@
 #
 # Executes commands at login post-zshrc.
 #
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
+
+# Enable zsh debugging
+setopt XTRACE
+setopt VERBOSE
+PS4='+%N:%i> '
+exec 2>> "${HOME}/zsh-debug.log"
+
+# Helper function to safely source files
+function source_if_exists() {
+    local file="${1}"
+    local shell="${SHELL##*/}"
+    local source_file="zlogin"
+    
+    # Skip if file doesn't exist
+    if [[ ! -s "${file}" ]]; then
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] File does not exist or is empty: ${file}"
+        return
+    fi
+    
+    # Handle shell-specific files
+    if [[ "${file}" == *.zsh ]]; then
+        [[ "${shell}" == "zsh" ]] && {
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing zsh file: ${file}"
+            if ! (source "${file}"); then
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source zsh file: ${file}"
+            fi
+        }
+    elif [[ "${file}" == *.bash ]]; then
+        [[ "${shell}" == "bash" ]] && {
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing bash file: ${file}"
+            if ! (source "${file}"); then
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source bash file: ${file}"
+            fi
+        }
+    else
+        # Source non-shell-specific files
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing file: ${file}"
+        if ! (source "${file}"); then
+            echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source file: ${file}"
+        fi
+    fi
+}
 
 # Execute code that does not affect the current session in the background.
 {
   # Compile the completion dump to increase startup speed.
-  zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
-  if [[ -s "$zcompdump" && (! -s "${zcompdump}.zwc" || "$zcompdump" -nt "${zcompdump}.zwc") ]]; then
-    zcompile "$zcompdump"
+  zcompdump="${ZDOTDIR:-${HOME}}/.zcompdump"
+  if [[ -s "${zcompdump}" && (! -s "${zcompdump}.zwc" || "${zcompdump}" -nt "${zcompdump}.zwc") ]]; then
+    zcompile "${zcompdump}"
   fi
 } &!
 
@@ -19,25 +58,14 @@ if (( $+commands[fortune] )); then
   if [[ -t 0 || -t 1 ]]; then
     fortune -s
   fi
-elif [[ -f "${HOME}/.zprezto/scripts/random-quote.sh" ]]; then
-  source "${HOME}/.zprezto/scripts/random-quote.sh"
 fi
 
-if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
-  source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-fi
-
-# zsh-autosuggestions is not compatable with amazon-q
-if ! [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
-  if command -v "brew" > /dev/null && [[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-      source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-  elif [[ -f "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh" ]]; then
-      source "${HOME}/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
-  fi
-fi
+# Source RVM if it exists
+# source_if_exists "${HOME}/.rvm/scripts/rvm"
 
 # ---- zoxide -----
-eval "$(zoxide init --cmd 'cd' zsh)"
+# eval "$(zoxide init zsh)"
+# alias cd='z'
 
 # ---- FZF -----
 
@@ -54,24 +82,22 @@ export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${
 # -- Use fd instead of fzf --
 
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_COMMAND="${FZF_DEFAULT_COMMAND}"
 export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
 
 # Use fd (https://github.com/sharkdp/fd) for listing path candidates.
 # - The first argument to the function ($1) is the base path to start traversal
 # - See the source code (completion.{bash,zsh}) for the details.
-_fzf_compgen_path() {
-  fd --hidden --exclude .git . "$1"
+function _fzf_compgen_path() {
+  fd --hidden --exclude .git . "${1}"
 }
 
 # Use fd to generate the list for directory completion
-_fzf_compgen_dir() {
-  fd --type=d --hidden --exclude .git . "$1"
+function _fzf_compgen_dir() {
+  fd --type=d --hidden --exclude .git . "${1}"
 }
 
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/fzf-git.sh" ]]; then
-    source "${ZDOTDIR:-$HOME}/.zprezto/fzf-git.sh"
-fi
+# source_if_exists "${ZDOTDIR:-${HOME}}/.zprezto/fzf-git.sh"
 
 export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
 export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
@@ -79,11 +105,11 @@ export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
 # Advanced customization of fzf options via _fzf_comprun function
 # - The first argument to the function is the name of the command.
 # - You should make sure to pass the rest of the arguments to fzf.
-_fzf_comprun() {
-  local command=$1
+function _fzf_comprun() {
+  local command="${1}"
   shift
 
-  case "$command" in
+  case "${command}" in
     cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
     export|unset) fzf --preview "eval 'echo \$'{}"         "$@" ;;
     ssh)          fzf --preview 'dig {}'                   "$@" ;;
@@ -122,29 +148,6 @@ alias lt="eza --color=auto --long --git --no-filesize --icons=always --group-dir
 autoload -U compinit && compinit -u
 
 # ---- atuin -----
-
-# Not working
-function atuin-macro-setup () {
-    # bindkey '^a' atuin-up-search
-    # Has some UI conflicts with current setup
-    function atuin-strict-search () {
-        # --cmd-only \
-        # --filter-mode possible values: global, host, session, directory, workspace
-        # --format <FORMAT>
-        #   Available variables: {command}, {directory}, {duration}, {user}, {host}, {time}, {exit} and {relativetime}.
-        #   Example: --format "{time} - [{duration}] - {directory}$\t{command}"
-      atuin search \
-        --interactive \
-        --exit 0 \
-        --inline-height 30 \
-        --filter-mode 'global' \
-        --search-mode 'fulltext' \
-        --human
-
-    }
-    zle -N atuin-strict-search
-    bindkey '^a' atuin-strict-search
-}
 
 # ---- atuin (command history) -----
 if type "atuin" > /dev/null
