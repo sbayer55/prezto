@@ -146,13 +146,20 @@ function docker-compose-restart () {
     docker-compose start ${WORKER}
 }
 
-# NVM
-export NVM_DIR="${HOME}/.nvm"
 function nvm-init () {
     export NVM_DIR="${HOME}/.nvm"
-    # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+    # Check if nvm is installed via homebrew
+    if [ -s "/opt/homebrew/opt/nvm/nvm.sh" ]; then
+        \. "/opt/homebrew/opt/nvm/nvm.sh"
+        [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+    # Fallback to NVM_DIR if homebrew installation not found
+    elif [ -s "$NVM_DIR/nvm.sh" ]; then
+        \. "$NVM_DIR/nvm.sh"
+    else
+        echo "nvm not found. Please install nvm first."
+        return 1
+    fi
+
     nvm current
 }

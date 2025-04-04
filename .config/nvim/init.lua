@@ -26,6 +26,46 @@ vim.opt.expandtab = true               -- Use spaces instead of tabs
 vim.opt.cursorline = true              -- Highlight current line
 vim.opt.scrolloff = 8                  -- Keep 8 lines above/below cursor
 vim.opt.sidescrolloff = 8              -- Keep 8 columns left/right of cursor
+vim.opt.showtabline = 2                -- Always show tab bar
+
+-- Custom tab line function
+function _G.MyTabLine()
+  local tabline_string = ' '  -- Start with a space for better alignment
+  local max_filename_length = 15  -- Maximum length for filenames
+  
+  for tab_number = 1, vim.fn.tabpagenr('$') do
+    local is_current_tab = tab_number == vim.fn.tabpagenr()
+    local tab_highlight = is_current_tab and '%#TabLineSel#' or '%#TabLine#'
+    tabline_string = tabline_string .. tab_highlight .. ' ' .. '%' .. tab_number .. 'T'
+    
+    -- Get the current buffer for this tab
+    local tab_buffers = vim.fn.tabpagebuflist(tab_number)
+    local current_window = vim.fn.tabpagewinnr(tab_number)
+    local current_buffer = tab_buffers[current_window]
+    local buffer_name = vim.fn.fnamemodify(vim.fn.bufname(current_buffer), ':t')
+    
+    -- If no filename, show [No Name]
+    if buffer_name == '' then
+      buffer_name = '[No Name]'
+    end
+    
+    -- Truncate filename if it's too long
+    if #buffer_name > max_filename_length then
+      buffer_name = buffer_name:sub(1, max_filename_length - 2) .. '…'
+    end
+    
+    -- Add tab number and filename with fixed width
+    tabline_string = tabline_string .. ' ' .. tab_number .. ':' .. string.format('%-' .. max_filename_length .. 's', buffer_name) .. ' '
+    
+    if is_current_tab then
+      tabline_string = tabline_string .. tab_highlight .. ' '
+    end
+  end
+  tabline_string = tabline_string .. '%#TabLineFill#%T'
+  return tabline_string
+end
+
+vim.opt.tabline = "%!v:lua.MyTabLine()"
 
 -- Install lazy.nvim if not already installed
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -42,10 +82,11 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Tab navigation keybindings
--- Overlays with which-key
--- vim.api.nvim_set_keymap('n', '[', ':tabprevious<CR>', { noremap = true, silent = true })
--- vim.api.nvim_set_keymap('n', ']', ':tabnext<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>tn', ':tabnew<CR>', { noremap = true, silent = true, desc = "New tab" })
+vim.api.nvim_set_keymap('n', '<leader>tp', ':tabprevious<CR>', { noremap = true, silent = true, desc = "Previous tab" })
+vim.api.nvim_set_keymap('n', '<leader>tn', ':tabnext<CR>', { noremap = true, silent = true, desc = "Next tab" })
+vim.api.nvim_set_keymap('n', '<leader>tt', '<cmd>lua require("neo-tree").setup()<CR>:tabnew<CR><cmd>Neotree<CR>', { noremap = true, silent = true, desc = "New tab" })
+vim.api.nvim_set_keymap('n', '<leader>tc', ':tabclose<CR>', { noremap = true, silent = true, desc = "Close tab" })
+vim.api.nvim_set_keymap('n', '<leader>to', ':tabonly<CR>', { noremap = true, silent = true, desc = "Close other tabs" })
 
 -- Plugin specifications
 require("lazy").setup({
@@ -56,44 +97,6 @@ require("lazy").setup({
     priority = 1000,
     config = function()
       vim.cmd.colorscheme("tokyonight-moon")
-    end,
-  },
-
-  -- Which-key for hotkey help
-  {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    config = function()
-      vim.o.timeout = true
-      vim.o.timeoutlen = 300
-      require("which-key").setup({
-        plugins = {
-          spelling = {
-            enabled = true,
-          },
-        },
-        window = {
-          border = "single",
-          position = "bottom",
-        },
-        disable = {
-          buftypes = {},
-          filetypes = {},
-        },
-        hidden = { "<silent>", "<cmd>", "<Cmd>", "<CR>", "call", "lua", "^:", "^ " },
-      })
-      
-      -- Register group names for better organization
-      local wk = require("which-key")
-      wk.register({
-        ["<leader>f"] = { name = "Find/Files" },
-        ["<leader>b"] = { name = "Buffers" },
-        ["<leader>c"] = { name = "Code" },
-        ["<leader>g"] = { name = "Git" },
-        ["<leader>l"] = { name = "LSP" },
-        ["<leader>t"] = { name = "Tabs/Toggle" },
-        ["<leader>s"] = { name = "Search/Symbol" },
-      })
     end,
   },
 
@@ -213,6 +216,55 @@ require("lazy").setup({
         window = {
           width = 30,
         },
+        filesystem = {
+          filtered_items = {
+            visible = true,
+            show_hidden_count = true,
+            hide_dotfiles = false,
+            hide_gitignored = true,
+            hide_by_name = {},
+            never_show = {},
+          },
+          sort_function = function(a, b)
+            -- Sort directories first
+            if a.type == "directory" and b.type ~= "directory" then
+              return true
+            elseif a.type ~= "directory" and b.type == "directory" then
+              return false
+            end
+            -- Case-insensitive sort for items of the same type
+            return string.lower(a.name) < string.lower(b.name)
+          end,
+        },
+        default_component_configs = {
+          icon = {
+            folder_closed = "",
+            folder_open = "",
+            folder_empty = "",
+            default = "",
+          },
+          modified = {
+            symbol = "●",
+          },
+          git_status = {
+            symbols = {
+              -- Change type
+              added     = "✚",
+              modified  = "",
+              deleted   = "✖",
+              renamed   = "",
+              -- Status type
+              untracked = "",
+              ignored   = "",
+              unstaged  = "",
+              staged    = "",
+              conflict  = "",
+            }
+          },
+        },
+        mappings = {
+          ["<space>"] = false, -- Disable space key
+        },
       })
     end,
   },
@@ -232,6 +284,7 @@ require("lazy").setup({
       { "<leader>fg", "<cmd>Telescope live_grep<CR>", desc = "Find in files" },
       { "<leader>fb", "<cmd>Telescope buffers<CR>", desc = "Find buffers" },
       { "<leader>fh", "<cmd>Telescope help_tags<CR>", desc = "Find help" },
+      { "<leader>fc", "<cmd>Telescope commands<CR>", desc = "Find commands" },
     },
     config = function()
       require("telescope").setup({
@@ -790,7 +843,18 @@ vim.keymap.set('v', '<leader>jm', "<cmd>lua require('jdtls').extract_method(true
   end
 end
 
--- Add autocmds and other settings here
+-- -- Add autocmds and other settings here
+-- vim.api.nvim_create_autocmd("VimEnter", {
+--   pattern = "*",
+--   callback = function()
+--     -- Show Neo-tree if a directory is opened
+--     if vim.fn.isdirectory(vim.fn.expand("%")) == 1 then
+--       require("neo-tree").setup()
+--       vim.cmd("Neotree")
+--     end
+--   end,
+-- })
+
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*",
   callback = function()
