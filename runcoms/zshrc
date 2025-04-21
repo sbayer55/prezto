@@ -29,13 +29,13 @@ function source_if_exists() {
     local file="${1}"
     local shell="${SHELL##*/}"
     local source_file="${0}"
-    
+
     # Skip if file doesn't exist
     if [[ ! -s "${file}" ]]; then
         [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] File does not exist or is empty: ${file}"
         return
     fi
-    
+
     # Handle shell-specific files
     if [[ "${file}" == *.zsh ]]; then
         [[ "${shell}" == "zsh" ]] && {
@@ -90,12 +90,6 @@ source_if_exists "${HOME}/.fzf.zsh"
 source_if_exists "${HOME}/.iterm2_shell_integration.bash"
 source_if_exists "${HOME}/.iterm2_shell_integration.zsh"
 
-# Java 21
-if [[ -s "${HOME}/.jdks/corretto-21.0.2/bin/java" ]]; then
-    export JAVA_HOME="${HOME}/.jdks/corretto-21.0.2/bin"
-    add_to_path "${HOME}/.jdks/corretto-21.0.2/bin"
-fi
-
 export EDITOR=nvim
 export VISUAL=nvim
 
@@ -124,13 +118,40 @@ alias "kl"="kubectl logs"
 # Easy stop logictech process when mx devices stop working
 alias "kill-logi"="ps -A | grep -i 'Logitech' | grep -v 'grep' | awk '{ print \$1 }' | sudo xargs kill -9"
 
-function kill-process () {
-    local PROCESS="${1}"
-    if [[ -z "${PROCESS}" ]]; then
-        echo "Usage: kill-process <process_name>"
+function kill-xargs () {
+    if [[ -n "$1" ]]
+    then
+        # OG
+        # src https://stackoverflow.com/questions/8987037/how-to-kill-all-processes-with-a-given-partial-name
+        # ps -ef | grep 'myProcessName' | grep -v grep | awk '{print $2}' | xargs -r kill -9
+        ps -aux | grep -i "$1" | grep -v grep | awk '{print $2}' | xargs -r kill -9
+    else
+        echo "A process name must be specified"
+        echo "will run \`ps -aux | grep -i "\$1" | grep -v grep | awk '{print \$2}' | xargs -r kill -9\`"
+    fi
+}
+
+alias "fix-iphone-mirroring"="rm /Users/smbayer/Library/Containers/com.apple.ScreenContinuity/Data/Library/Preferences/com.apple.ScreenContinuity.plist"
+
+function tmux-tail () {
+    # Check if at least one argument (session name) is provided
+    if [[ $# -lt 1 ]]; then
+        echo "Usage: tmux_logs <session_name> [number_of_lines]"
         return 1
     fi
-    ps -A | grep -i "${PROCESS}" | grep -v 'grep' | awk '{ print $1 }' | sudo xargs kill -9
+
+    # Assign arguments to variables
+    session_name=$1
+    num_lines=${2:-100}  # Default to 100 if not provided
+
+    # Check if the session exists
+    if ! tmux has-session -t "$session_name" 2>/dev/null; then
+        echo "Error: Tmux session '$session_name' not found"
+        return 1
+    fi
+
+    # Capture and print the logs
+    tmux capture-pane -p -t "$session_name" -S -"$num_lines" | grep -v '^$'
 }
 
 # Docker
@@ -163,3 +184,51 @@ function nvm-init () {
 
     nvm current
 }
+
+function iterm-help () {
+    echo "DevDesktop:                    <󰘴-󰘳> a"
+    echo "Autocompletion:                <󰘳> ;"
+    echo "Toolbelt:                      <󰘶-󰘳> b"
+    echo "Edit Session:                  <󰘳> i"
+    echo "Timestamps:                    <󰘶-󰘳> e"
+    echo "Alert On Finish:               <󰘵-󰘳> a"
+    echo "Git History:                   <󰘳> g <󰘳> h"
+}
+
+function tmux-help () {
+    echo "Tmux Create Window:            <󰘴-b> c"
+    echo "Tmux Rename Window:            <󰘴-b> ,"
+    echo "Tmux Close Window:             <󰘴-b> &"
+    echo "Tmux List Window:              <󰘴-b> w"
+    echo "Tmux Previous Window:          <󰘴-b> p"
+    echo "Tmux Next Window:              <󰘴-b> n"
+    echo "Tmux Switch Window:            <󰘴-b> 0..9"
+    echo "Tmux Split Window Vertical:    <󰘴-b> %"
+    echo 'Tmux Split Window Horizontal:  <󰘴-b> "'
+    echo "Tmux Next Pane:                <󰘴-b> o"
+    echo "Tmux Show Pane Numbers:        <󰘴-b> p"
+    echo "Tmux Switch Pane:              <󰘴-b> q 0..9"
+    echo "Tmux Convert Pane To Window:   <󰘴-b> q 0..9"
+    echo "Tmux Close Pane:               <󰘴-b> x"
+}
+
+function lvim-help () {
+    echo "https://vimtricks.com/p/vim-code-folding/"
+    echo "za – Toggles the current fold open or closed. – The most useful command to know of all of these."
+    echo "zA – Same as za except it toggles all folds beneath as well. Since folds can be nested (such as with indent folding), this will toggle the state of all the folds underneath of it, not just the current fold."
+    echo "zc – Close the current fold."
+    echo "zC – Same as above, but closes folds nested underneath as well."
+    echo "zo – Open the current fold."
+    echo "zO – Same as above, but opens folds nested underneath as well."
+    echo "vimrc no fold: ':set nofoldenable'"
+    echo "<S-\`> - Open terminal"
+    echo "    or :terminal"
+}
+
+# Amazon Q post block. Keep at the bottom of this file.
+if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
+    if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]]; then
+        builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+    fi
+fi
+
