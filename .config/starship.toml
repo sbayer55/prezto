@@ -1,12 +1,23 @@
+# Theme
 format = """
+$status
+$cmd_duration\
+$terraform\
+$vagrant\
+$kubernetes\
+$container\
 [](#9A348E)\
 $os\
+$character\
+$battery\
 $username\
 [](bg:#DA627D fg:#9A348E)\
 $directory\
 [](fg:#DA627D bg:#FCA17D)\
 $git_branch\
 $git_status\
+$git_state\
+$git_commit\
 [](fg:#FCA17D bg:#86BBD8)\
 $c\
 $elixir\
@@ -20,18 +31,66 @@ $nodejs\
 $nim\
 $rust\
 $scala\
+$package\
 [](fg:#86BBD8 bg:#06969A)\
+$aws\
 $docker_context\
-[](fg:#06969A bg:#33658A)\
-$time\
-[ ](fg:#33658A)\
+$time
+
 """
 
-# Disable the blank line at the start of the prompt
-# add_newline = false
+# Shell indicators
+[status]
+style = "white"
+symbol = "\\(╯°□°\\)╯︵ ┻━┻ "
+format = '''
+[$symbol | $common_meaning $signal_name $maybe_int]($style)
+'''
+map_symbol = true
+disabled = false
 
-# You can also replace your username with a neat symbol like   or disable this
-# and use the os module below
+[cmd_duration]
+min_time = 500
+format = "took [$duration](bold yellow)\n"
+
+[terraform]
+symbol = "󱁢 "
+
+[vagrant]
+symbol = "󰡨 "
+
+[kubernetes]
+symbol = "☸ "
+format = '[$symbol$context( \($namespace\))]($style)'
+style = "cyan"
+disabled = false
+
+[container]
+symbol = "⊞ "
+style = "red"
+format = '[$symbol \[$name\]]($style)'
+
+[character]
+format = '[$symbol](bg:#9A348E)'
+success_symbol = "[](fg:#ffffff bg:#9A348E)"
+error_symbol = "[✗ ](bold fg:#ff0000 bg:#9A348E)"
+vicmd_symbol = "[V ](bold fg:#00ff00 bg:#9A348E)"
+disabled = false
+
+[battery]
+full_symbol = "🔋"
+charging_symbol = "⚡"
+discharging_symbol = "💀"
+format = '[$symbol$percentage ]($style)'
+
+[[battery.display]]
+threshold = 40
+style = "fg:#ffffff bg:#9A348E"
+
+[os]
+style = "bg:#9A348E"
+disabled = true
+
 [username]
 show_always = true
 style_user = "fg:#ffffff bg:#9A348E"
@@ -39,47 +98,67 @@ style_root = "bg:#9A348E"
 format = '[$user ]($style)'
 disabled = false
 
-# An alternative to the username module which displays a symbol that
-# represents the current operating system
-[os]
-style = "bg:#9A348E"
-disabled = true # Disabled by default
-
+#https://starship.rs/config/#directory
 [directory]
+# Not in a repo
 style = "fg:#ffffff bg:#DA627D"
-read_only = " 🔒"
-read_only_style = "bg:#DA627D"
-format = "[$read_only]($read_only_style)[ $path ]($style)"
+format = "[ $path ]($style)"
+
+# In a repo
+before_repo_root_style = 'bold fg:#9A348E bg:#DA627D'
+repo_root_style = "bold fg:#ffffff bg:#DA627D"
+#[ $before_root_path]($before_repo_root_style)
+
+read_only = "🔒"
+read_only_style = "fg:#ffffff bg:#DA627D"
+repo_root_format = """
+[ 󰏗 $repo_root]($repo_root_style)\
+[$path ](italic $style)\
+[$read_only]($read_only_style)\
+"""
+
 truncation_length = 6
 truncate_to_repo = true
 truncation_symbol = "…/"
-# Breaks read_only
-# repo_root_style = "fg:#9A348E bg:#DA627D"
 home_symbol = " "
 
-# Here is how you can shorten some long paths by text replacement
-# similar to mapped_locations in Oh My Posh:
 [directory.substitutions]
 "Documents" = "󰈙 "
 "Downloads" = " "
 "Music" = " "
 "Pictures" = " "
-"workplace" = " "
-# Keep in mind that the order matters. For example:
-# "Important Documents" = " 󰈙 "
-# will not be replaced, because "Documents" was already substituted before.
-# So either put "Important Documents" before "Documents" or use the substituted version:
-# "Important 󰈙 " = " 󰈙 "
+"/Volumes/workplace" = " "
+
+[git_branch]
+symbol = ""
+style = "bold italic fg:#ffffff bg:#FCA17D"
+format = '[ $symbol $branch ]($style)'
+
+[git_status]
+style = "bold italic fg:#ffffff bg:#FCA17D"
+format = '[$all_status$ahead_behind ]($style)'
+conflicted = "="
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+untracked = "?"
+stashed = '\$'
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+
+[git_commit]
+commit_hash_length = 8
+style = "bold white"
 
 [c]
 symbol = " "
 style = "bold fg:#ffffff bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
-
-[docker_context]
-symbol = " "
-style = "bold fg:#ffffff bg:#06969A"
-format = '[ $symbol $context ]($style)'
 
 [elixir]
 symbol = " "
@@ -90,15 +169,6 @@ format = '[ $symbol ($version) ]($style)'
 symbol = " "
 style = "bold fg:#ffffff bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
-
-[git_branch]
-symbol = ""
-style = "bold italic fg:#ffffff bg:#FCA17D"
-format = '[ $symbol $branch ]($style)'
-
-[git_status]
-style = "bold italic fg:#ffffff bg:#FCA17D"
-format = '[$all_status$ahead_behind ]($style)'
 
 [golang]
 symbol = " "
@@ -144,8 +214,45 @@ symbol = " "
 style = "bold fg:#ffffff bg:#86BBD8"
 format = '[ $symbol ($version) ]($style)'
 
+[docker_context]
+symbol = " "
+style = "bold fg:#ffffff bg:#06969A"
+format = '[](fg:#86BBD8 bg:#06969A)[ $symbol $context ]($style)'
+
+[package]
+symbol = "📦 "
+format = "[ $symbol ($version) ]($style) "
+style = "bold 208"
+
+[aws]
+symbol = "󰸏 "
+format = '[ $symbol($profile )($region ) ]($style)'
+style = "fg:#ffffff bg:#06969A"
+expiration_symbol = "󰚌"
+
 [time]
 disabled = false
-time_format = "%R" # Hour:Minute Format
+format = '[](fg:#06969A bg:#33658A)[ $time ]($style)[ ](fg:#33658A)'
+time_format = "%R"
+utc_time_offset = "local"
 style = "fg:#ffffff bg:#33658A"
-format = '[ ♥ $time ]($style)'
+
+[hostname]
+ssh_only = false
+format = "on [$hostname](bold red) "
+disabled = true
+
+# Prompt order and newlines (single line prompt)
+[line_break]
+disabled = false
+
+[env_var]
+variable = "SHELL_PROMPT_MODE"
+default = "detailed"
+
+[custom.shell_indicator]
+command = "echo $SHELL"
+when = "true"
+format = "[$output]($style)"
+style = "bold green"
+disabled = true

@@ -140,10 +140,11 @@ fi
 
 # --color-scale, --colour-scale
 #   highlight levels of field distinctly.  Use comma(,) separated list of all, age, size
-alias ls="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=fixed --no-time --no-user --no-permissions"
-alias ll="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=fixed --time-style=relative --group-directories-first"
-alias la="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=fixed --time-style=relative --group-directories-first --all"
-alias lt="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first --color-scale-mode=gradient --color-scale=age --no-time --tree --level 2"
+eza_cmd="eza --color=auto --long --git --no-filesize --icons=always --group-directories-first"
+alias eza="${eza_cmd} --color-scale-mode=fixed --no-time --no-user --no-permissions"
+alias ll="${eza_cmd} --color-scale-mode=fixed --time-style=relative --group-directories-first"
+alias la="${eza_cmd} --color-scale-mode=fixed --time-style=relative --group-directories-first --all"
+alias lt="${eza_cmd} --color-scale-mode=gradient --color-scale=age --no-time --tree --level 2"
 
 # ---- Jump -----
 
