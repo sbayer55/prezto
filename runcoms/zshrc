@@ -1,3 +1,10 @@
+# Amazon Q pre block. Keep at the top of this file.
+if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
+    if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]]; then
+        builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+    fi
+fi
+
 # Source Prezto.
 
 # Profile Prezto startup. Use "zprof" to print results.
@@ -85,13 +92,45 @@ elif [[ -s "/opt/python3/bin/python3" ]]; then
 fi
 
 # Source configuration files
-source_if_exists "${ZDOTDIR:-${HOME}}/.zprezto/runcoms/amazonrc"
+source_if_exists "${HOME}}/.zprezto/runcoms/amazonrc"
 source_if_exists "${HOME}/.fzf.zsh"
 source_if_exists "${HOME}/.iterm2_shell_integration.bash"
 source_if_exists "${HOME}/.iterm2_shell_integration.zsh"
+source_if_exists "${HOME}/.cargo/bin"
+source_if_exists "/usr/local/aws-cli/v2/current/bin"
+source_if_exists "${HOME}/.fzf.zsh"
 
 export EDITOR=nvim
 export VISUAL=nvim
+
+
+if type starship > /dev/null; then
+    eval "$(starship init zsh)"
+fi
+
+# Find latest java version
+if [[ -z $JAVA_HOME ]]; then
+    export JAVA_HOME="$(find "${HOME}/Library/Java/JavaVirtualMachines/" -type d -depth 1 |
+        awk -F- '/[0-9]+\.[0-9]+\.[0-9]+/ {
+            version=$NF;
+            gsub(/\.jdk$/, "", version);
+            split(version, v, ".");
+            printf "%d %d %d %s\n", v[1], v[2], v[3], $0
+        }' | sort -k1,1nr -k2,2nr -k3,3nr \
+        | awk '{ print $4 "/Contents/Home" }' |
+        head -n 1)"
+
+    if [[ -s "${JAVA_HOME}" ]]; then
+        export PATH="${JAVA_HOME}/bin:${PATH}"
+        export JAVACMD="${JAVA_HOME}/bin/java"
+    else
+        RED='\033[31m'
+        RED_ITALIC='\033[31;3m'
+        RESET='\033[0m'
+        echo "${RED}Auto detected JAVA_HOME '${RED_ITALIC}${JAVA_HOME}${RED}' does not actually exist, unsetting JAVA_HOME${RESET}"
+        unset JAVA_HOME
+    fi
+fi
 
 # OS defaults
 alias "grep"="grep --color=auto"
