@@ -1,8 +1,41 @@
+[user]
+	email = sbayer55@gmail.com
+  name = Steven Bayer
+[include]
+  path = /Users/smbayer/catppuccin.gitconfig
+[color]
+	ui = auto
+[core]
+  # pager = less -FMRiX
+  pager = delta
+	editor = vim
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+  features = catppuccin-mocha
+	navigate = true
+	side-by-side = true
+  # dark = true
+  line-numbers = true
+  hyperlinks = true
+  hyperlinks-file-link-format = "idea://open?file={path}&line={line}"
+[delta "decorations"]
+  commit-decoration-style = bold red box ul
+  file-style = bold red ul
+  file-decoration-style = none
+  hunk-header-decoration-style = red box
+[merge]
+	conflictstyle = zdiff3
+[push]
+	default = simple
 [alias]
-    log = log --pretty=oneline
-    diff = diff --color-words
-    file-diff = diff --no-index
-    diff-staged = diff --staged
-    diff-search = diff --color-words --word-diff-regex
-    blame = blame --color-lines --color-by-age
-    graph = log --oneline --decorate --all --graph 
+	graph = log --graph --abbrev-commit --decorate --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)%ar%C(reset)%C(auto)%d%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+	dag = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+	history = log --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)%ar%C(reset)%C(auto)%d%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+  log = log --pretty=oneline
+  blame = blame --color-lines --color-by-age
+[init]
+	defaultBranch = main
+[diff]
+  colorMoved = default
+

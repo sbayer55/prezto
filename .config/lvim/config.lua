@@ -18,10 +18,11 @@ lvim.keys.normal_mode["<C-b>"] = ":NvimTreeToggle<CR>"
 lvim.keys.normal_mode["<C-1>"] = ":NvimTreeToggle<CR>"
 
 -- Telescope find keybinds
-lvim.keys.normal_mode["<LEADER>ff"] = "<CMD>lua require('telescope').find_files()<CR>"
-lvim.keys.normal_mode["<LEADER>fg"] = "<CMD>lua require('telescope').live_grep()<CR>"
-lvim.keys.normal_mode["<LEADER>fb"] = "<CMD>lua require('telescope').buffers()<CR>"
-lvim.keys.normal_mode["<LEADER>fh"] = "<CMD>lua require('telescope').help_tags()<CR>"
+lvim.builtin.which_key.mappings["f"] = { name = "Find" }
+lvim.builtin.which_key.mappings["ff"] = { "<cmd>Telescope find_files<CR>", "Find File" }
+lvim.builtin.which_key.mappings["fg"] = { "<cmd>Telescope live_grep<CR>", "Live Grep" }
+lvim.builtin.which_key.mappings["fb"] = { "<cmd>Telescope buffers<CR>", "Find Buffer" }
+lvim.builtin.which_key.mappings["fh"] = { "<cmd>Telescope help_tags<CR>", "Find Help Tag" }
 
 -- ToggleTerm
 lvim.keys.normal_mode["<C-`>"] = ":ToggleTerm<CR>"

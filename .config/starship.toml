@@ -1,24 +1,36 @@
-# Theme
-format = """
-$status
+# nf-md-circle_half                     : 󱎕
+# nf-ple-left_half_circle_thick         : 
+# nf-ple-right_half_circle_thick        : 
+# nf-pl-left_hard_divider               : 
+# nf-pl-right_hard_divider              : 
+# nf-pl-left_soft_divider               : 
+# nf-pl-right_soft_divider              : 
+# nf-ple-left_hard_divider_inverse      : 
+# nf-ple-right_hard_divider_inverse     : 
+
+# Prompt
+format = """\
 $cmd_duration\
+$status\
 $terraform\
 $vagrant\
 $kubernetes\
 $container\
-[](#9A348E)\
+[](c1)\
+[\
 $os\
 $character\
 $battery\
 $username\
-[](bg:#DA627D fg:#9A348E)\
+](bg:c1 fg:white)\
+[](bg:c2 fg:c1)\
 $directory\
-[](fg:#DA627D bg:#FCA17D)\
+[](bg:c3 fg:c2)\
 $git_branch\
 $git_status\
 $git_state\
 $git_commit\
-[](fg:#FCA17D bg:#86BBD8)\
+[](bg:c4 fg:c3)\
 $c\
 $elixir\
 $elm\
@@ -31,27 +43,72 @@ $nodejs\
 $nim\
 $rust\
 $scala\
+[](bg:c5 fg:c4)\
 $package\
-[](fg:#86BBD8 bg:#06969A)\
+[](bg:c6 fg:c5)\
 $aws\
 $docker_context\
-$time
-
+[](bg:c7 fg:c6)\
+[](bg:c8 fg:c7)\
+[](bg:c9 fg:c8)\
+[](bg:c10 fg:c9)\
+[](bg:c11 fg:c10)\
+$time\
+[](fg:c11)
+[ ❯ ](fg:c11)\
 """
+
+palette = "route_96"
+
+[palettes.route_96]
+white = "#ffffff"
+black = "#000000"
+dark_red = "#770017"
+red = "#b40827"
+pink = "#df3068"
+purple = "#b248cb"
+blue = "#3c67c1"
+slate = "#63b1f0"
+cyan = "#92eafa"
+yellow = "#f8edb9"
+light_yellow = "#fffdf2"
+seafoam = "#bafee5"
+green = "#62f5aa"
+
+c1 = "#770017"
+c2 = "#b40827"
+c3 = "#df3068"
+c4 = "#b248cb"
+c5 = "#3c67c1"
+c6 = "#63b1f0"
+c7 = "#92eafa"
+c8 = "#f8edb9"
+c9 = "#fffdf2"
+c10 = "#bafee5"
+c11 = "#62f5aa"
 
 # Shell indicators
 [status]
-style = "white"
+style = "fg:light_yellow"
 symbol = "\\(╯°□°\\)╯︵ ┻━┻ "
 format = '''
-[$symbol | $common_meaning $signal_name $maybe_int]($style)
+ ╭─── [󱄷](fg:dark_red) [󰢫](bold fg:red)    [󰈸](fg:red)[󰈸](fg:blue)[󰈸](fg:pink)
+ │
+ │ [$symbol](bold fg:yellow) [$common_meaning $signal_name $maybe_int]($style)
+ ╰────────────────────────────
 '''
 map_symbol = true
 disabled = false
 
 [cmd_duration]
 min_time = 500
-format = "took [$duration](bold yellow)\n"
+format = "[>>> elapsed time $duration]($style)\n"
+style = "bold fg:white"
+show_notifications = true
+# Shortest duration for notification (in milliseconds)
+min_time_to_notify = 60000
+# 20 Minutes
+notification_timeout = 1200000
 
 [terraform]
 symbol = "󱁢 "
@@ -71,10 +128,10 @@ style = "red"
 format = '[$symbol \[$name\]]($style)'
 
 [character]
-format = '[$symbol](bg:#9A348E)'
-success_symbol = "[](fg:#ffffff bg:#9A348E)"
-error_symbol = "[✗ ](bold fg:#ff0000 bg:#9A348E)"
-vicmd_symbol = "[V ](bold fg:#00ff00 bg:#9A348E)"
+format = '[$symbol]()'
+success_symbol = "[](bg:c1 fg:white)"
+error_symbol = "[✗ ](bold bg:c1 fg:peach)"
+vicmd_symbol = "[V ](bold bg:c1 fg:green)"
 disabled = false
 
 [battery]
@@ -85,32 +142,32 @@ format = '[$symbol$percentage ]($style)'
 
 [[battery.display]]
 threshold = 40
-style = "fg:#ffffff bg:#9A348E"
+style = "fg:white"
 
 [os]
-style = "bg:#9A348E"
+style = ""
 disabled = true
 
 [username]
 show_always = true
-style_user = "fg:#ffffff bg:#9A348E"
-style_root = "bg:#9A348E"
+style_user = "bg:c1 fg:white"
+style_root = "bg:blue"
 format = '[$user ]($style)'
 disabled = false
 
 #https://starship.rs/config/#directory
 [directory]
 # Not in a repo
-style = "fg:#ffffff bg:#DA627D"
+style = "bg:c2 fg:white"
 format = "[ $path ]($style)"
 
 # In a repo
-before_repo_root_style = 'bold fg:#9A348E bg:#DA627D'
-repo_root_style = "bold fg:#ffffff bg:#DA627D"
+before_repo_root_style = 'bg:c2 fg:white'
+repo_root_style = "bg:c2 fg:white"
 #[ $before_root_path]($before_repo_root_style)
 
 read_only = "🔒"
-read_only_style = "fg:#ffffff bg:#DA627D"
+read_only_style = "bg:c2 fg:white"
 repo_root_format = """
 [ 󰏗 $repo_root]($repo_root_style)\
 [$path ](italic $style)\
@@ -131,11 +188,11 @@ home_symbol = " "
 
 [git_branch]
 symbol = ""
-style = "bold italic fg:#ffffff bg:#FCA17D"
+style = "bold italic bg:c3 fg:white"
 format = '[ $symbol $branch ]($style)'
 
 [git_status]
-style = "bold italic fg:#ffffff bg:#FCA17D"
+style = "bold italic bg:c3 fg:white"
 format = '[$all_status$ahead_behind ]($style)'
 conflicted = "="
 ahead = "⇡"
@@ -153,89 +210,89 @@ format = '\([$state( $progress_current/$progress_total)]($style)\) '
 
 [git_commit]
 commit_hash_length = 8
-style = "bold white"
+style = "bold bg:c3 fg:white"
 
 [c]
 symbol = " "
-style = "bold fg:#ffffff bg:#86BBD8"
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [elixir]
 symbol = " "
-style = "bold fg:#ffffff bg:#86BBD8"
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [elm]
 symbol = " "
-style = "bold fg:#ffffff bg:#86BBD8"
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [golang]
 symbol = " "
-style = "bold fg:#ffffff bg:#86BBD8"
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [gradle]
-style = "bold fg:#ffffff bg:#86BBD8"
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [haskell]
 symbol = " "
-style = "bold fg:#ffffff bg:#86BBD8"
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [java]
 symbol = " "
-style = "bold fg:#ffffff bg:#86BBD8"
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [julia]
 symbol = " "
-style = "bold fg:#ffffff bg:#86BBD8"
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [nodejs]
-symbol = ""
-style = "bold fg:#ffffff bg:#86BBD8"
+symbol = ""
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [nim]
 symbol = "󰆥 "
-style = "bold fg:#ffffff bg:#86BBD8"
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [rust]
 symbol = ""
-style = "bold fg:#ffffff bg:#86BBD8"
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [scala]
 symbol = " "
-style = "bold fg:#ffffff bg:#86BBD8"
+style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
 
 [docker_context]
 symbol = " "
-style = "bold fg:#ffffff bg:#06969A"
-format = '[](fg:#86BBD8 bg:#06969A)[ $symbol $context ]($style)'
+style = "bg:c4 fg:white"
+format = '[ $symbol $context ]($style)'
 
 [package]
 symbol = "📦 "
 format = "[ $symbol ($version) ]($style) "
-style = "bold 208"
+style = "bg:c5 fg:white"
 
 [aws]
 symbol = "󰸏 "
 format = '[ $symbol($profile )($region ) ]($style)'
-style = "fg:#ffffff bg:#06969A"
+style = "bg:c6 fg:white"
 expiration_symbol = "󰚌"
 
 [time]
 disabled = false
-format = '[](fg:#06969A bg:#33658A)[ $time ]($style)[ ](fg:#33658A)'
+format = '[ $time ]($style)'
 time_format = "%R"
 utc_time_offset = "local"
-style = "fg:#ffffff bg:#33658A"
+style = "bg:c11 fg:blue"
 
 [hostname]
 ssh_only = false

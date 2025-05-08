@@ -21,7 +21,6 @@ if [[ "${ZSH_DEBUG}" == "true" ]]; then
 fi
 
 export ZPREZTO_HOME=${HOME}/.zprezto
-source "${ZDOTDIR:-${HOME}}/.zprezto/init.zsh"
 
 # Helper function to safely add paths
 function add_to_path() {
@@ -270,4 +269,3 @@ if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
         builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
     fi
 fi
-

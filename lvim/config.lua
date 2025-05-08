@@ -10,9 +10,9 @@ vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 
 -- File explorer
-lvim.keys.normal_mode["<C-b>"] = false
-lvim.keys.normal_mode["<C-b>"] = ":NvimTreeToggle<CR>"
-lvim.keys.normal_mode["<LEADER>b"] = ":NvimTreeToggle<CR>"
+-- lvim.keys.normal_mode["<C-b>"] = false
+-- lvim.keys.normal_mode["<C-b>"] = ":NvimTreeToggle<CR>"
+-- lvim.keys.normal_mode["<LEADER>b"] = ":NvimTreeToggle<CR>"
 
 -- Indent / Unindent
 -- Conflicts with code folding
