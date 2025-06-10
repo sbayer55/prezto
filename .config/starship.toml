@@ -92,16 +92,13 @@ c11 = "#62f5aa"
 style = "fg:light_yellow"
 symbol = "\\(╯°□°\\)╯︵ ┻━┻ "
 format = '''
- ╭─── [󱄷](fg:dark_red) [󰢫](bold fg:red)    [󰈸](fg:red)[󰈸](fg:blue)[󰈸](fg:pink)
- │
- │ [$symbol](bold fg:yellow) [$common_meaning $signal_name $maybe_int]($style)
- ╰────────────────────────────
+[$symbol](bold fg:yellow) [$common_meaning $signal_name $maybe_int]($style)
 '''
 map_symbol = true
 disabled = false
 
 [cmd_duration]
-min_time = 500
+min_time = 5000
 format = "[>>> elapsed time $duration]($style)\n"
 style = "bold fg:white"
 show_notifications = true
@@ -164,18 +161,18 @@ format = "[ $path ]($style)"
 # In a repo
 before_repo_root_style = 'bg:c2 fg:white'
 repo_root_style = "bg:c2 fg:white"
-#[ $before_root_path]($before_repo_root_style)
 
 read_only = "🔒"
 read_only_style = "bg:c2 fg:white"
 repo_root_format = """
+[ $before_root_path]($before_repo_root_style)\
 [ 󰏗 $repo_root]($repo_root_style)\
 [$path ](italic $style)\
 [$read_only]($read_only_style)\
 """
 
 truncation_length = 6
-truncate_to_repo = true
+truncate_to_repo = false
 truncation_symbol = "…/"
 home_symbol = " "
 
@@ -216,70 +213,84 @@ style = "bold bg:c3 fg:white"
 symbol = " "
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [elixir]
 symbol = " "
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [elm]
 symbol = " "
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [golang]
 symbol = " "
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [gradle]
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [haskell]
 symbol = " "
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [java]
 symbol = " "
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [julia]
 symbol = " "
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [nodejs]
 symbol = ""
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [nim]
 symbol = "󰆥 "
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [rust]
 symbol = ""
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [scala]
 symbol = " "
 style = "bg:c4 fg:white"
 format = '[ $symbol ($version) ]($style)'
+disabled = true
 
 [docker_context]
 symbol = " "
 style = "bg:c4 fg:white"
 format = '[ $symbol $context ]($style)'
+disabled = false
 
 [package]
 symbol = "📦 "
 format = "[ $symbol ($version) ]($style) "
 style = "bg:c5 fg:white"
+disabled = true
 
 [aws]
 symbol = "󰸏 "

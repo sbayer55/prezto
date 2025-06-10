@@ -1,5 +1,5 @@
 [user]
-	email = sbayer55@gmail.com
+	email = smbayer@amazon.com
   name = Steven Bayer
 [include]
   path = /Users/smbayer/catppuccin.gitconfig
@@ -25,15 +25,16 @@
   file-decoration-style = none
   hunk-header-decoration-style = red box
 [merge]
-	conflictstyle = zdiff3
+  conflictstyle = zdiff3
 [push]
-	default = simple
+  default = simple
 [alias]
-	graph = log --graph --abbrev-commit --decorate --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)%ar%C(reset)%C(auto)%d%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
-	dag = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
-	history = log --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)%ar%C(reset)%C(auto)%d%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
-  log = log --pretty=oneline
+  graph = log --graph --abbrev-commit --decorate --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)%ar%C(reset)%C(auto)%d%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+  dag = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+  history = log --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)%ar%C(reset)%C(auto)%d%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+  ll = log --pretty=oneline
   blame = blame --color-lines --color-by-age
+  ls = ls-files
 [init]
 	defaultBranch = main
 [diff]
