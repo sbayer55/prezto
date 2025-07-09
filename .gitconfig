@@ -13,8 +13,8 @@
 	diffFilter = delta --color-only
 [delta]
   features = catppuccin-mocha
-	navigate = true
-	side-by-side = true
+  navigate = true
+  side-by-side = true
   # dark = true
   line-numbers = true
   hyperlinks = true
