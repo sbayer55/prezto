@@ -115,3 +115,5 @@ if status is-interactive
       source ~/.iterm2_shell_integration.fish
     end
 end
+
+string match -q "$TERM_PROGRAM" "kiro" and . (kiro --locate-shell-integration-path fish)

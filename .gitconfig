@@ -7,7 +7,7 @@
 	ui = auto
 [core]
   # pager = less -FMRiX
-  pager = delta
+  pager = delta --side-by-side -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}
 	editor = vim
 [interactive]
 	diffFilter = delta --color-only

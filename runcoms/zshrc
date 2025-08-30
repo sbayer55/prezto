@@ -15,6 +15,42 @@ if [[ "${ZSH_DEBUG}" == "true" ]]; then
     PS4='+%N:%i> '
 fi
 
+# Helper function to safely source files
+function source_if_exists() {
+    local file="${1}"
+    local shell="${SHELL##*/}"
+    local source_file="${0}"
+
+    # Skip if file doesn't exist
+    if [[ ! -s "${file}" ]]; then
+        [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] File does not exist or is empty: ${file}"
+        return
+    fi
+
+    # Handle shell-specific files
+    if [[ "${file}" == *.zsh ]]; then
+        [[ "${shell}" == "zsh" ]] && {
+            [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing zsh file: ${file}"
+            if ! (source "${file}"); then
+                [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source zsh file: ${file}"
+            fi
+        }
+    elif [[ "${file}" == *.bash ]]; then
+        [[ "${shell}" == "bash" ]] && {
+            [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing bash file: ${file}"
+            if ! (source "${file}"); then
+                [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source bash file: ${file}"
+            fi
+        }
+    else
+        # Source non-shell-specific files
+        [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing file: ${file}"
+        if ! (source "${file}"); then
+            [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source file: ${file}"
+        fi
+    fi
+}
+
 export ZSH_TMUX_AUTOSTART=false
 export ZSH_TMUX_AUTOSTART_ONCE=true
 export ZSH_TMUX_AUTONAME_SESSION=true
@@ -195,10 +231,8 @@ fi
 # Source configuration files
 source_if_exists "${HOME}/.zprezto/runcoms/amazonrc"
 source_if_exists "${HOME}/.fzf.zsh"
+source_if_exists "${HOME}/.zprezto/fzf-git.sh"
 source_if_exists "${HOME}/.iterm2_shell_integration.zsh"
-source_if_exists "${HOME}/.fzf.zsh"
-# source_if_exists "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-
 
 export EDITOR=nvim
 export VISUAL=nvim
@@ -257,6 +291,9 @@ alias "kl"="kubectl logs"
 # Easy stop logictech process when mx devices stop working
 alias "kill-logi"="ps -A | grep -i 'Logitech' | grep -v 'grep' | awk '{ print \$1 }' | sudo xargs kill -9"
 
+# Git stuff
+alias "gg"="git graph"
+
 function kill-xargs () {
     if [[ -n "$1" ]]
     then
@@ -310,51 +347,6 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-
-
-# Enable zsh debugging if toggle is on
-if [[ "${ZSH_DEBUG}" == "true" ]]; then
-    setopt XTRACE
-    setopt VERBOSE
-    PS4='+%N:%i> '
-fi
-
-# Helper function to safely source files
-function source_if_exists() {
-    local file="${1}"
-    local shell="${SHELL##*/}"
-    local source_file="${0}"
-    
-    # Skip if file doesn't exist
-    if [[ ! -s "${file}" ]]; then
-        [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] File does not exist or is empty: ${file}"
-        return
-    fi
-    
-    # Handle shell-specific files
-    if [[ "${file}" == *.zsh ]]; then
-        [[ "${shell}" == "zsh" ]] && {
-            [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing zsh file: ${file}"
-            if ! (source "${file}"); then
-                [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source zsh file: ${file}"
-            fi
-        }
-    elif [[ "${file}" == *.bash ]]; then
-        [[ "${shell}" == "bash" ]] && {
-            [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing bash file: ${file}"
-            if ! (source "${file}"); then
-                [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source bash file: ${file}"
-            fi
-        }
-    else
-        # Source non-shell-specific files
-        [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Sourcing file: ${file}"
-        if ! (source "${file}"); then
-            [[ "${ZSH_DEBUG}" == "true" ]] && echo "[$(date '+%Y-%m-%d %H:%M:%S')] [${source_file}] Failed to source file: ${file}"
-        fi
-    fi
-}
-
 # Execute code that does not affect the current session in the background.
 {
   # Compile the completion dump to increase startup speed.
@@ -382,17 +374,14 @@ alias cdi='zi'
 # ---- FZF -----
 
 # --- setup fzf theme ---
-fg="#CBE0F0"
-bg="#011628"
-bg_highlight="#143652"
-purple="#B388FF"
-blue="#06BCE4"
-cyan="#2CF9ED"
-
-export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${bg_highlight},hl+:${purple},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+    --color=fg:#9399b2,bg:-1,hl:#cdd6f4
+    --color=fg+:#a6adc8,bg+:#313244,hl+:#7db6ff
+    --color=info:#6c7086,prompt:#f38ba8,pointer:#cba6f7
+    --color=marker:#79e5d5,spinner:#cdd6f4,header:#a6e3a1
+    --color=label:#a6e3a1'
 
 # -- Use fd instead of fzf --
-
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
 export FZF_CTRL_T_COMMAND="${FZF_DEFAULT_COMMAND}"
 export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
@@ -408,8 +397,6 @@ function _fzf_compgen_path() {
 function _fzf_compgen_dir() {
   fd --type=d --hidden --exclude .git . "${1}"
 }
-
-# source_if_exists "${ZDOTDIR:-${HOME}}/.zprezto/fzf-git.sh"
 
 export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
 export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
@@ -439,6 +426,24 @@ function fzf-keybinds() {
     echo "reflogs                       <󰘴> g <󰘴> L"
     echo "Worktrees                     <󰘴> g <󰘴> W"
     echo "Each ref (git for-each-ref)   <󰘴> g <󰘴> E"
+}
+
+function _fzf_git_fzf() {
+    fzf --height "-3" \
+        --tmux 90%,70% \
+        --layout reverse \
+        --multi \
+        --min-height 20+ \
+        --margin "2,4" \
+        --border \
+        --no-separator \
+        --header-border horizontal \
+        --border-label-pos 2 \
+        --color 'label:#cdd6f4' \
+        --preview-window 'right,70%' \
+        --preview-border line \
+        --bind 'ctrl-/:change-preview-window(down,50%|hidden|)' \
+        "$@"
 }
 
 # ----- Bat (better cat) -----
@@ -496,10 +501,10 @@ function colorize() {
     local match_text="$2"
     local color="$3"
     local reset=$'\e[0m'
-    
+
     # Escape special characters in match_text for sed
     local escaped_match=$(echo "$match_text" | sed 's/[\/&]/\\&/g')
-    
+
     # Use printf to properly interpret escape sequences
     # The $'...' syntax in zsh allows for interpretation of escape sequences
     printf "%b" "$(echo "$message" | sed -E "s/$escaped_match/$color&$reset/gI")"
@@ -510,8 +515,11 @@ function colorize_regex() {
     local pattern="$2"
     local color="$3"
     local reset=$'\e[0m'
-    
+
     # Use printf to properly interpret escape sequences
     # The -E flag enables extended regular expressions
     printf "%b" "$(echo "$message" | sed -E "s/($pattern)/$color\\1$reset/g")"
 }
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
