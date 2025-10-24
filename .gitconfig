@@ -1,24 +1,20 @@
 [user]
-	email = smbayer@amazon.com
+  email = smbayer@amazon.com
   name = Steven Bayer
 [include]
   path = /Users/smbayer/catppuccin.gitconfig
 [color]
-	ui = auto
+  ui = auto
 [core]
   # pager = less -FMRiX
-  pager = delta --side-by-side -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}
-	editor = vim
+  pager = [ "${COLUMNS}" -ge 140 ] && delta --side-by-side -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS} || delta -w ${FZF_PREVIEW_COLUMNS:-$COLUMNS}
+  editor = vim
 [interactive]
-	diffFilter = delta --color-only
+  diffFilter = delta --color-only
 [delta]
   features = catppuccin-mocha
   navigate = true
-  side-by-side = true
-  # dark = true
   line-numbers = true
-  hyperlinks = true
-  hyperlinks-file-link-format = "idea://open?file={path}&line={line}"
 [delta "decorations"]
   commit-decoration-style = bold red box ul
   file-style = bold red ul
@@ -36,7 +32,7 @@
   blame = blame --color-lines --color-by-age
   ls = ls-files
 [init]
-	defaultBranch = main
+  defaultBranch = main
 [diff]
   colorMoved = default
 

@@ -82,7 +82,7 @@ show_preview = true
 # word_jump_mode = "emacs"
 
 ## characters that count as a part of a word
-# word_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+word_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-"
 
 ## number of context lines to show when scrolling by pages
 # scroll_context_lines = 1
@@ -237,7 +237,7 @@ common_prefix = ["sudo", "__jetbrains_intellij_run_generato"]
 
 [keys]
 # Defaults to true. If disabled, using the up/down key won't exit the TUI when scrolled past the first/last entry.
-# scroll_exits = false
+scroll_exits = false
 
 [sync]
 # Enable sync v2 by default

@@ -459,7 +459,7 @@ done
 echo -e "\n${YELLOW}Which package manager would you like to use? (Enter number)${NC}"
 read -r MANAGER_CHOICE
 
-if ! [[ "$MANAGER_CHOICE" =~ ^[0-9]+$ ]] || ((MANAGER_CHOICE < 1 || MANAGER_CHOICE > ${#available_managers[@]})); then
+if [ -z "${MANAGER_CHOICE##*[!0-9]*}" ] || [ "$MANAGER_CHOICE" -lt 1 ] || [ "$MANAGER_CHOICE" -gt "${#available_managers[@]}" ]; then
   echo -e "${RED}Invalid selection. Exiting.${NC}"
   exit 1
 fi

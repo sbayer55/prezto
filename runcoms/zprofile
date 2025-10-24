@@ -85,3 +85,7 @@ if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
         builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh"
     fi
 fi
+
+if type "rbenv" > /dev/null; then
+  eval "$(rbenv init - --no-rehash zsh)"
+fi
