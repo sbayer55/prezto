@@ -1,0 +1,29 @@
+#!/usr/bin/env zsh
+
+autoload -Uz async && async
+
+async_start_worker zsh_async_rc_worker -n
+
+function nvm-init() {
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+}
+
+ZSH_ASYNC_COMPLETED=0
+function zsh_async_rc_worker_callback() {
+  ZSH_ASYNC_COMPLETED=$(( ZSH_ASYNC_COMPLETED + 1 ))
+  print $@
+}
+
+async_register_callback zsh_async_rc_worker zsh_async_rc_worker_callback
+
+async_job zsh_async_rc_worker nvm-init
+
+while (( ZSH_ASYNC_COMPLETED < 1 )); do
+  print "doing async stuff"
+  sleep 0.1
+done
+
+print "Completed $COMPLETED tasks!"
+

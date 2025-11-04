@@ -37,7 +37,6 @@ function source_if_exists() {
 }
 
 # Add directories to PATH
-add_to_path "/opt/homebrew/Cellar/ruby/3.3.0/bin"
 add_to_path "${HOME}/code/bin/commands"
 add_to_path "${HOME}/code/bin/tools"
 add_to_path "${HOME}/code/bin"
@@ -482,6 +481,9 @@ function nvm-init() {
     [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
     # [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 }
+nvm-init
+
+#source_if_exists "${HOME}/.zprezto/runcoms/zshasyncrc"
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
-export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+
