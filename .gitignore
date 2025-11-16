@@ -10,4 +10,5 @@ runcoms/amazonrc
 .config/htop/*.tmp.*
 .config/htop/htoprc
 wasabi-toolbag
+oh-my-zsh/custom
 

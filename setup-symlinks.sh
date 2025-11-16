@@ -16,7 +16,7 @@ create-symlink ${ZPREZTO_HOME}/runcoms/zpreztorc ${HOME}/.zpreztorc
 create-symlink ${ZPREZTO_HOME}/runcoms/zprofile ${HOME}/.zprofile
 create-symlink ${ZPREZTO_HOME}/runcoms/zshenv ${HOME}/.zshenv
 create-symlink ${ZPREZTO_HOME}/runcoms/p10k.zsh ${HOME}/.p10k.zsh
-create-symlink ${ZPREZTO_HOME}/runcoms/ ${HOME}/.zshrc
+create-symlink ${ZPREZTO_HOME}/runcoms/zshrc ${HOME}/.zshrc
 create-symlink ${ZPREZTO_HOME}/.tmux.conf ${HOME}/.tmux.conf
 create-symlink ${ZPREZTO_HOME}/.tmux.conf.local ${HOME}/.tmux.conf.local
 create-symlink ${ZPREZTO_HOME}/.tmux ${HOME}/.tmux
@@ -31,4 +31,6 @@ do
     rm -RI "$HOME/.config/$(basename "${config_item}")"
     ln -s $config_item $HOME/.config
 done
+
+echo "Symlink setup complete"
 

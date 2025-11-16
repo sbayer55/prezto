@@ -56,3 +56,10 @@ if [[ -z "$input" || "$input" =~ ^[Yy]$ ]]; then
     # Need OS check
     curl -sS https://starship.rs/install.sh | shi
 fi
+
+echo -e "${YELLOW}Install Oh My ZSH? [Y/n]${NC}"
+read -r input
+
+if [[ -z "$input" || "$input" =~ ^[Yy]$ ]]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
