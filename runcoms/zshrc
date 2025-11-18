@@ -13,6 +13,7 @@ if [[ "${ZSH_DEBUG}" == "true" ]]; then
     setopt XTRACE
     setopt VERBOSE
     PS4='+%N:%i> '
+    zmodload zsh/zprof
 fi
 
 # Helper function to safely add paths
@@ -481,9 +482,13 @@ function nvm-init() {
     [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
     # [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 }
-nvm-init
+# nvm-init
 
 #source_if_exists "${HOME}/.zprezto/runcoms/zshasyncrc"
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+if [[ "${ZSH_DEBUG}" == "true" ]]; then
+    zprof
+fi
 
