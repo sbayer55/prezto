@@ -51,6 +51,7 @@ add_to_path "${HOME}/.rvm/bin"
 add_to_path "${HOME}/.cargo/bin"
 add_to_path "/usr/local/aws-cli/v2/current/bin"
 add_to_path "${HOME}/apache-maven-3.9.6/bin"
+add_to_path "${HOME}/.nvm/versions/node/v22.20.0/bin"
 
 # Python path handling
 if [[ -s "/opt/homebrew/opt/python@3.12/bin" ]]; then
@@ -476,6 +477,10 @@ function colorize_regex() {
     # The -E flag enables extended regular expressions
     printf "%b" "$(echo "$message" | sed -E "s/($pattern)/$color\\1$reset/g")"
 }
+
+# Quick load node
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh" --no-use
 
 function nvm-init() {
     export NVM_DIR="$HOME/.nvm"

@@ -122,12 +122,6 @@ keymap("n", "<C-u>", "<C-u>zz", { desc = "Scroll up and center" })
 keymap("n", "n", "nzzzv", { desc = "Next search result" })
 keymap("n", "N", "Nzzzv", { desc = "Previous search result" })
 
--- Save file
-keymap("n", "<leader>w", ":w<CR>", { desc = "Save file" })
-
--- Quit
-keymap("n", "<leader>q", ":q<CR>", { desc = "Quit" })
-
 -- Folding keymaps
 keymap("n", "za", "za", { desc = "Toggle fold under cursor" })
 keymap("n", "zA", "zA", { desc = "Toggle all folds under cursor" })

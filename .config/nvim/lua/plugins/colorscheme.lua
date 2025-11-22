@@ -18,11 +18,11 @@ return {
 
       -- Get the cursor color (usually from Normal highlight group)
       local cursor_color = vim.api.nvim_get_hl(0, { name = "Cursor" })
-      local cursor_bg = cursor_color.bg or "#FFFFFF"
+      local cursor_bg = cursor_color.bg or 0xFFFFFF
 
       -- Get the line number color
       local linenr_color = vim.api.nvim_get_hl(0, { name = "LineNr" })
-      local linenr_fg = linenr_color.fg or "#727072"
+      local linenr_fg = linenr_color.fg or 0x727072
 
       -- Additional customizations
       vim.api.nvim_set_hl(0, "FoldColumn", { bg = "NONE", fg = string.format("#%06x", linenr_fg) })
