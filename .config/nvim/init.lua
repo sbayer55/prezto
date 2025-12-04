@@ -29,6 +29,9 @@ vim.opt.splitright = true            -- Vertical splits to the right
 vim.opt.scrolloff = 8                -- Keep 8 lines visible when scrolling
 vim.opt.sidescrolloff = 8            -- Keep 8 columns visible when scrolling
 
+-- Clipboard integration with system clipboard (macOS)
+vim.opt.clipboard = "unnamedplus"    -- Use system clipboard for all yank/delete/put operations
+
 -- Folding settings (using treesitter when available)
 vim.opt.foldmethod = 'expr'          -- Use expression for folding
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'  -- Use treesitter for folding
@@ -106,6 +109,15 @@ keymap("n", "<S-l>", ":bnext<CR>", { desc = "Next buffer" })
 keymap("n", "<S-h>", ":bprevious<CR>", { desc = "Previous buffer" })
 keymap("n", "<leader>bd", ":bdelete<CR>", { desc = "Delete buffer" })
 
+-- Tab navigation
+keymap("n", "<leader>tn", ":tabnew<CR>", { desc = "New tab" })
+keymap("n", "<leader>tc", ":tabclose<CR>", { desc = "Close tab" })
+keymap("n", "<leader>to", ":tabonly<CR>", { desc = "Close other tabs" })
+keymap("n", "<C-Tab>", ":tabnext<CR>", { desc = "Next tab" })
+keymap("n", "<C-S-Tab>", ":tabprevious<CR>", { desc = "Previous tab" })
+keymap("n", "gt", ":tabnext<CR>", { desc = "Next tab (vim style)" })
+keymap("n", "gT", ":tabprevious<CR>", { desc = "Previous tab (vim style)" })
+
 -- Better indenting
 keymap("v", "<", "<gv", { desc = "Indent left and keep selection" })
 keymap("v", ">", ">gv", { desc = "Indent right and keep selection" })
@@ -131,6 +143,9 @@ keymap("n", "zo", "zo", { desc = "Open fold under cursor" })
 keymap("n", "zO", "zO", { desc = "Open all folds under cursor" })
 keymap("n", "zR", "zR", { desc = "Open all folds in file" })
 keymap("n", "zM", "zM", { desc = "Close all folds in file" })
+
+-- Filetype selection
+keymap("n", "<leader>ft", ":set filetype=", { desc = "Set filetype (language)" })
 
 -- Mouse-specific keymaps
 -- Middle mouse button paste
