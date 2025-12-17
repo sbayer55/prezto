@@ -11,4 +11,5 @@ runcoms/amazonrc
 .config/htop/htoprc
 wasabi-toolbag
 oh-my-zsh/custom
+.config/nvim/lazy-lock.json
 
