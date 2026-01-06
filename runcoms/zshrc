@@ -51,7 +51,12 @@ add_to_path "${HOME}/.rvm/bin"
 add_to_path "${HOME}/.cargo/bin"
 add_to_path "/usr/local/aws-cli/v2/current/bin"
 add_to_path "${HOME}/apache-maven-3.9.6/bin"
-add_to_path "${HOME}/.nvm/versions/node/v22.20.0/bin"
+
+# NVM setup
+if [[ -s "${HOME}/.nvm/versions/node" ]]; then
+    node_dir="$(ls "${HOME}/.nvm/versions/node" | tail -n 1)"
+    add_to_path "${node_dir}/bin"
+fi
 
 # Python path handling
 if [[ -s "/opt/homebrew/opt/python@3.12/bin" ]]; then
@@ -207,7 +212,7 @@ export VISUAL=nvim
 # fi
 
 # Find latest java version
-if [[ -z $JAVA_HOME ]]; then
+if [[ -z $JAVA_HOME  && -d "${HOME}/Library/Java/JavaVirtualMachines" ]]; then
     export JAVA_HOME="$(find "${HOME}/Library/Java/JavaVirtualMachines/" -type d -depth 1 |
         awk -F- '/[0-9]+\.[0-9]+\.[0-9]+/ {
             version=$NF;
