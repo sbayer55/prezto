@@ -1,17 +1,3 @@
-# Amazon Q pre block. Keep at the top of this file.
-if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
-    if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.pre.zsh" ]]; then
-        builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.pre.zsh"
-    fi
-fi
-
-#
-# Executes commands at login pre-zshrc.
-#
-# Authors:
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
-
 #
 # Browser
 #
@@ -24,7 +10,7 @@ fi
 # Editors
 #
 
-export EDITOR='lvim'
+export EDITOR='nvim'
 export VISUAL='code'
 export PAGER='less'
 
@@ -74,18 +60,16 @@ if [[ -s "/opt/homebrew/bin/brew" ]]; then
 fi
 
 
-# Setting PATH for Python 3.10
-# The original version is saved in .zprofile.pysave
-PATH="/Library/Frameworks/Python.framework/Versions/3.10/bin:${PATH}"
-export PATH
-
-# Amazon Q post block. Keep at the bottom of this file.
-if [[ -f "${HOME}/.config/enable-amazon-q" ]]; then
-    if [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh" ]]; then
-        builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh"
-    fi
+# ---- rbenv (lazy-loaded) -----
+if [[ -d "$HOME/.rbenv" ]] || type "rbenv" > /dev/null 2>&1; then
+    # Add rbenv to PATH if needed
+    [[ -d "$HOME/.rbenv/bin" ]] && export PATH="$HOME/.rbenv/bin:$PATH"
+    
+    # Set up rbenv shims in PATH (for faster startup)
+    [[ -d "$HOME/.rbenv/shims" ]] && export PATH="$HOME/.rbenv/shims:$PATH"
+    
+    # Lazy-load rbenv initialization (note: this needs to be defined in zshrc, not zprofile)
+    # The above PATH setup allows ruby/gem commands to work immediately
 fi
-
-if type "rbenv" > /dev/null; then
-  eval "$(rbenv init - --no-rehash zsh)"
-fi
+# Added by Obsidian
+export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"

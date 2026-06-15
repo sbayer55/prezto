@@ -1,5 +1,5 @@
 [user]
-  email = smbayer@amazon.com
+	email = sbayer55@gmail.com
   name = Steven Bayer
 [include]
   path = /Users/smbayer/catppuccin.gitconfig
@@ -36,3 +36,8 @@
 [diff]
   colorMoved = default
 
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f

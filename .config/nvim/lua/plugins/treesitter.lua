@@ -2,94 +2,44 @@
 return {
   "nvim-treesitter/nvim-treesitter",
   build = ":TSUpdate",
-  event = { "BufReadPost", "BufNewFile" },
-  dependencies = {
-    "nvim-treesitter/nvim-treesitter-textobjects", -- Better text objects
-  },
+  lazy = false,
+  priority = 1000,
   config = function()
-    require("nvim-treesitter.configs").setup({
-      -- Install parsers for these languages
-      ensure_installed = {
-        "ruby",
-        "lua",
-        "vim",
-        "vimdoc",
-        "python",
-        "javascript",
-        "typescript",
-        "json",
-        "yaml",
-        "markdown",
-        "markdown_inline",
-        "bash",
-        "html",
-        "css",
-      },
+    -- Install parsers for these languages
+    local ensure_installed = {
+      "ruby",
+      "lua",
+      "vim",
+      "vimdoc",
+      "python",
+      "javascript",
+      "typescript",
+      "json",
+      "yaml",
+      "markdown",
+      "markdown_inline",
+      "bash",
+      "html",
+      "css",
+    }
 
-      -- Install parsers synchronously (only applied to `ensure_installed`)
-      sync_install = false,
+    -- Install missing parsers on startup
+    local function ensure_parsers_installed()
+      for _, lang in ipairs(ensure_installed) do
+        local ok = pcall(vim.treesitter.language.inspect, lang)
+        if not ok then
+          pcall(vim.cmd, "TSInstall " .. lang)
+        end
+      end
+    end
 
-      -- Automatically install missing parsers when entering buffer
-      auto_install = true,
+    vim.defer_fn(ensure_parsers_installed, 100)
 
-      -- Highlight configuration
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = false,
-      },
-
-      -- Indentation based on treesitter
-      indent = {
-        enable = true,
-      },
-
-      -- Incremental selection
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = "<C-space>",
-          node_incremental = "<C-space>",
-          scope_incremental = false,
-          node_decremental = "<bs>",
-        },
-      },
-
-      -- Text objects
-      textobjects = {
-        select = {
-          enable = true,
-          lookahead = true, -- Automatically jump forward to textobj
-          keymaps = {
-            -- You can use the capture groups defined in textobjects.scm
-            ["af"] = "@function.outer",
-            ["if"] = "@function.inner",
-            ["ac"] = "@class.outer",
-            ["ic"] = "@class.inner",
-            ["aa"] = "@parameter.outer",
-            ["ia"] = "@parameter.inner",
-          },
-        },
-        move = {
-          enable = true,
-          set_jumps = true, -- whether to set jumps in the jumplist
-          goto_next_start = {
-            ["]m"] = "@function.outer",
-            ["]]"] = "@class.outer",
-          },
-          goto_next_end = {
-            ["]M"] = "@function.outer",
-            ["]["] = "@class.outer",
-          },
-          goto_previous_start = {
-            ["[m"] = "@function.outer",
-            ["[["] = "@class.outer",
-          },
-          goto_previous_end = {
-            ["[M"] = "@function.outer",
-            ["[]"] = "@class.outer",
-          },
-        },
-      },
+    -- Enable treesitter-based highlighting
+    vim.api.nvim_create_autocmd("FileType", {
+      callback = function()
+        pcall(vim.treesitter.start)
+      end,
     })
 
     -- Set folding to use treesitter

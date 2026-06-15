@@ -133,7 +133,6 @@ return {
       -- Setup mason-lspconfig with handlers
       require("mason-lspconfig").setup({
         ensure_installed = {
-          "solargraph", -- Ruby language server
           "lua_ls",     -- Lua (for Neovim config)
         },
         automatic_installation = true,
@@ -143,24 +142,6 @@ return {
             lspconfig[server_name].setup({
               capabilities = capabilities,
               on_attach = on_attach,
-            })
-          end,
-
-          -- Custom handler for solargraph
-          ["solargraph"] = function()
-            lspconfig.solargraph.setup({
-              capabilities = capabilities,
-              on_attach = on_attach,
-              settings = {
-                solargraph = {
-                  diagnostics = true,
-                  formatting = true,
-                  completion = true,
-                  hover = true,
-                  autoformat = false,
-                  useBundler = true,
-                },
-              },
             })
           end,
 
