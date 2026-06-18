@@ -1,0 +1,326 @@
+# nf-md-circle_half                     : 󱎕
+# nf-ple-left_half_circle_thick         : 
+# nf-ple-right_half_circle_thick        : 
+# nf-pl-left_hard_divider               : 
+# nf-pl-right_hard_divider              : 
+# nf-pl-left_soft_divider               : 
+# nf-pl-right_soft_divider              : 
+# nf-ple-left_hard_divider_inverse      : 
+# nf-ple-right_hard_divider_inverse     : 
+
+# Prompt
+format = """\
+$cmd_duration\
+$status\
+$terraform\
+$vagrant\
+$kubernetes\
+$container\
+[](c1)\
+[\
+$os\
+$character\
+$battery\
+$username\
+](bg:c1 fg:white)\
+[](bg:c2 fg:c1)\
+$directory\
+[](bg:c3 fg:c2)\
+$git_branch\
+$git_status\
+$git_state\
+$git_commit\
+[](bg:c4 fg:c3)\
+$c\
+$elixir\
+$elm\
+$golang\
+$gradle\
+$haskell\
+$java\
+$julia\
+$nodejs\
+$nim\
+$rust\
+$scala\
+[](bg:c5 fg:c4)\
+$package\
+[](bg:c6 fg:c5)\
+$aws\
+$docker_context\
+[](bg:c7 fg:c6)\
+[](bg:c8 fg:c7)\
+[](bg:c9 fg:c8)\
+[](bg:c10 fg:c9)\
+[](bg:c11 fg:c10)\
+$time\
+[](fg:c11)
+[ ❯ ](fg:c11)\
+"""
+
+palette = "route_96"
+
+[palettes.route_96]
+white = "#ffffff"
+black = "#000000"
+dark_red = "#770017"
+red = "#b40827"
+pink = "#df3068"
+purple = "#b248cb"
+blue = "#3c67c1"
+slate = "#63b1f0"
+cyan = "#92eafa"
+yellow = "#f8edb9"
+light_yellow = "#fffdf2"
+seafoam = "#bafee5"
+green = "#62f5aa"
+
+c1 = "#770017"
+c2 = "#b40827"
+c3 = "#df3068"
+c4 = "#b248cb"
+c5 = "#3c67c1"
+c6 = "#63b1f0"
+c7 = "#92eafa"
+c8 = "#f8edb9"
+c9 = "#fffdf2"
+c10 = "#bafee5"
+c11 = "#62f5aa"
+
+# Shell indicators
+[status]
+style = "fg:light_yellow"
+symbol = "\\(╯°□°\\)╯︵ ┻━┻ "
+format = '''
+[$symbol](bold fg:yellow) [$common_meaning $signal_name $maybe_int]($style)
+'''
+map_symbol = true
+disabled = false
+
+[cmd_duration]
+min_time = 5000
+format = "[>>> elapsed time $duration]($style)\n"
+style = "bold fg:white"
+show_notifications = true
+# Shortest duration for notification (in milliseconds)
+min_time_to_notify = 60000
+# 20 Minutes
+notification_timeout = 1200000
+
+[terraform]
+symbol = "󱁢 "
+
+[vagrant]
+symbol = "󰡨 "
+
+[kubernetes]
+symbol = "☸ "
+format = '[$symbol$context( \($namespace\))]($style)'
+style = "cyan"
+disabled = false
+
+[container]
+symbol = "⊞ "
+style = "red"
+format = '[$symbol \[$name\]]($style)'
+
+[character]
+format = '[$symbol]()'
+success_symbol = "[](bg:c1 fg:white)"
+error_symbol = "[✗ ](bold bg:c1 fg:peach)"
+vicmd_symbol = "[V ](bold bg:c1 fg:green)"
+disabled = false
+
+[battery]
+full_symbol = "🔋"
+charging_symbol = "⚡"
+discharging_symbol = "💀"
+format = '[$symbol$percentage ]($style)'
+
+[[battery.display]]
+threshold = 40
+style = "fg:white"
+
+[os]
+style = ""
+disabled = true
+
+[username]
+show_always = true
+style_user = "bg:c1 fg:white"
+style_root = "bg:blue"
+format = '[$user ]($style)'
+disabled = false
+
+#https://starship.rs/config/#directory
+[directory]
+# Not in a repo
+style = "bg:c2 fg:white"
+format = "[ $path ]($style)"
+
+# In a repo
+before_repo_root_style = 'bg:c2 fg:white'
+repo_root_style = "bg:c2 fg:white"
+
+read_only = "🔒"
+read_only_style = "bg:c2 fg:white"
+repo_root_format = """
+[ $before_root_path]($before_repo_root_style)\
+[ 󰏗 $repo_root]($repo_root_style)\
+[$path ](italic $style)\
+[$read_only]($read_only_style)\
+"""
+
+truncation_length = 6
+truncate_to_repo = false
+truncation_symbol = "…/"
+home_symbol = " "
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+"/Volumes/workplace" = " "
+
+[git_branch]
+symbol = ""
+style = "bold italic bg:c3 fg:white"
+format = '[ $symbol $branch ]($style)'
+
+[git_status]
+style = "bold italic bg:c3 fg:white"
+format = '[$all_status$ahead_behind ]($style)'
+conflicted = "="
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+untracked = "?"
+stashed = '\$'
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+
+[git_commit]
+commit_hash_length = 8
+style = "bold bg:c3 fg:white"
+
+[c]
+symbol = " "
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[elixir]
+symbol = " "
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[elm]
+symbol = " "
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[golang]
+symbol = " "
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[gradle]
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[haskell]
+symbol = " "
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[java]
+symbol = " "
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[julia]
+symbol = " "
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[nodejs]
+symbol = ""
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[nim]
+symbol = "󰆥 "
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[rust]
+symbol = ""
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[scala]
+symbol = " "
+style = "bg:c4 fg:white"
+format = '[ $symbol ($version) ]($style)'
+disabled = true
+
+[docker_context]
+symbol = " "
+style = "bg:c4 fg:white"
+format = '[ $symbol $context ]($style)'
+disabled = false
+
+[package]
+symbol = "📦 "
+format = "[ $symbol ($version) ]($style) "
+style = "bg:c5 fg:white"
+disabled = true
+
+[aws]
+symbol = "󰸏 "
+format = '[ $symbol($profile )($region ) ]($style)'
+style = "bg:c6 fg:white"
+expiration_symbol = "󰚌"
+
+[time]
+disabled = false
+format = '[ $time ]($style)'
+time_format = "%R"
+utc_time_offset = "local"
+style = "bg:c11 fg:blue"
+
+[hostname]
+ssh_only = false
+format = "on [$hostname](bold red) "
+disabled = true
+
+# Prompt order and newlines (single line prompt)
+[line_break]
+disabled = false
+
+[env_var]
+variable = "SHELL_PROMPT_MODE"
+default = "detailed"
+
+[custom.shell_indicator]
+command = "echo $SHELL"
+when = "true"
+format = "[$output]($style)"
+style = "bold green"
+disabled = true
