@@ -109,7 +109,7 @@ truncate_to_repo = false
 fish_style_pwd_dir_length = 0
 
 [git_branch]
-symbol = ""
+symbol = " "
 
 [git_status]
 conflicted = "="
