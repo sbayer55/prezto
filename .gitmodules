@@ -10,9 +10,6 @@
 [submodule "modules/completion/external"]
 	path = modules/completion/external
 	url = https://github.com/zsh-users/zsh-completions.git
-[submodule "modules/prompt/external/powerline"]
-	path = modules/prompt/external/powerline
-	url = https://github.com/davidjrice/prezto_powerline.git
 [submodule "modules/prompt/external/agnoster"]
 	path = modules/prompt/external/agnoster
 	url = https://github.com/agnoster/agnoster-zsh-theme.git
@@ -22,15 +19,3 @@
 [submodule "modules/fasd/external"]
 	path = modules/fasd/external
 	url = https://github.com/clvv/fasd.git
-[submodule "modules/prompt/external/powerlevel9k"]
-	path = modules/prompt/external/powerlevel9k
-	url = https://github.com/bhilburn/powerlevel9k.git
-[submodule "oh-my-zsh/custom/plugins/zsh-autosuggestions"]
-	path = oh-my-zsh/custom/plugins/zsh-autosuggestions
-	url = https://github.com/zsh-users/zsh-autosuggestions.git
-[submodule "oh-my-zsh/custom/plugins/zsh-syntax-highlighting"]
-	path = oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule "oh-my-zsh/custom/themes/powerlevel10k"]
-	path = oh-my-zsh/custom/themes/powerlevel10k
-	url = https://github.com/romkatv/powerlevel10k.git
