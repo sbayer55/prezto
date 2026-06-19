@@ -78,8 +78,6 @@ if type starship > /dev/null; then
     eval "$(starship init zsh)"
 fi
 
-export ZPREZTO_HOME="${HOME}/.zprezto"
-
 # Find latest java version
 if [[ -z $JAVA_HOME  && -d "${HOME}/Library/Java/JavaVirtualMachines" ]]; then
     export JAVA_HOME="$(find "${HOME}/Library/Java/JavaVirtualMachines/" -type d -depth 1 |
@@ -134,6 +132,70 @@ alias "gg"="git graph"
 alias "gr"="git -c color.ui=always graph | head -n \$((LINES * 60 / 100))"
 
 alias "fix-iphone-mirroring"="rm /Users/smbayer/Library/Containers/com.apple.ScreenContinuity/Data/Library/Preferences/com.apple.ScreenContinuity.plist"
+
+export ALPHA_ACCOUNT_ID="481577574875"
+export BETA_ACCOUNT_ID="373447294381"
+export PROD_ACCOUNT_ID="521855441506"
+
+function _change-profile() {
+    account_id="${1}"
+    region="${2}"
+    role="${3}"
+    environment="${4}"
+    cluster_name="${environment}-vertex-platform"
+    cluster_arn="arn:aws:eks:${region}:${account_id}:cluster/${cluster_name}"
+    
+    export AWS_PROFILE="${role}-${account_id}"
+    export AWS_REGION="${region}"
+
+    if ! aws sts get-caller-identity --profile "${AWS_PROFILE}" > /dev/null 2>&1; then
+        aws sso login --profile "${AWS_PROFILE}"
+        if ! aws sts get-caller-identity --profile "${AWS_PROFILE}" > /dev/null 2>&1; then
+            echo "Failed to login to AWS"
+            return 1
+        fi
+    fi
+
+    if ! kubectl config get-contexts -o name 2>/dev/null | grep -qx "${cluster_arn}"; then
+        aws eks update-kubeconfig --region us-east-1 --name "${cluster_name}" > /dev/null
+    fi
+
+    kubectl config use-context "${cluster_arn}" > /dev/null
+}
+
+function unset-profile() {
+    unset AWS_PROFILE
+    unset AWS_REGION
+    kubectl config unset current-context > /dev/null
+}
+
+function alpha-admin() {
+    _change-profile "${ALPHA_ACCOUNT_ID}" "us-east-1" "AdministratorAccess" "alpha"
+}
+
+function alpha-readonly() {
+    _change-profile "${ALPHA_ACCOUNT_ID}" "us-east-1" "ReadOnlyAccess" "alpha"
+}
+
+function beta-admin() {
+    _change-profile "${BETA_ACCOUNT_ID}" "us-east-1" "AdministratorAccess" "beta"
+}
+
+function beta-readonly() {
+    _change-profile "${BETA_ACCOUNT_ID}" "us-east-1" "ReadOnlyAccess" "beta"
+}
+
+function prod-admin() {
+    _change-profile "${PROD_ACCOUNT_ID}" "us-east-1" "AdministratorAccess" "prod"
+}
+
+function prod-readonly() {
+    _change-profile "${PROD_ACCOUNT_ID}" "us-east-1" "ReadOnlyAccess" "prod"
+}
+
+function kind-dev() {
+    kubectl config use-context "kind-vertex-dev"
+}
 
 function kill-all () {
     search_pattern="($(printf "%s|" "$@" | sed 's/|$//'))"
@@ -378,6 +440,16 @@ fi
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
+# ---- Key bindings: Option+Left/Right move by word (macOS default) ----
+# EDITOR/VISUAL are "nvim", and zsh picks the vi keymap whenever those contain
+# the substring "vi". Force emacs line editing so the Esc that prefixes
+# Option+Left/Right doesn't drop into vi command mode, then bind the arrows.
+bindkey -e
+bindkey '^[b' backward-word       # Option+Left  (iTerm2 "Esc b")
+bindkey '^[f' forward-word        # Option+Right (iTerm2 "Esc f")
+bindkey '^[[1;3D' backward-word   # Option+Left  (CSI variant)
+bindkey '^[[1;3C' forward-word    # Option+Right (CSI variant)
+
 if [[ "${ZSH_DEBUG}" == "true" ]]; then
     zprof
 fi
@@ -392,3 +464,11 @@ fi
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# ---- Fish-like autosuggestions (ghost text from history; accept with ->) ----
+# Must be sourced before zsh-syntax-highlighting.
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+source_if_exists "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# ---- Command-line syntax highlighting (must be sourced LAST) ----
+source_if_exists "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"

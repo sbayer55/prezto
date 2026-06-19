@@ -6,6 +6,10 @@ $shlvl\
 $singularity\
 $kubernetes\
 $nats\
+${env_var.PROFILE}\
+${env_var.REGION}\
+${env_var.CTX}\
+${custom.cloud_context_break}\
 $directory\
 $vcsh\
 $fossil_branch\
@@ -128,3 +132,36 @@ format = '\([$state( $progress_current/$progress_total)]($style)\) '
 
 [git_commit]
 commit_hash_length = 8
+
+[kubernetes]
+format = '''[$symbol$context( \($namespace\))]($style)
+'''
+disabled = false
+
+[env_var.PROFILE]
+variable = "PROFILE"
+symbol = "☁ "
+format = "[$symbol$env_value]($style) "
+style = "red"
+
+[env_var.REGION]
+variable = "REGION"
+symbol = "🌎 "
+format = "[$symbol$env_value]($style) "
+style = "red"
+
+[env_var.CTX]
+variable = "CTX"
+symbol = "⎈ "
+format = "[$symbol$env_value]($style) "
+style = "cyan"
+
+[custom.cloud_context_break]
+when = 'test -n "$PROFILE" -o -n "$REGION" -o -n "$CTX"'
+command = "true"
+format = "\n"
+
+[aws]
+symbol = "󰸏 "
+style = "yellow"
+disabled = false

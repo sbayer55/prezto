@@ -12,7 +12,6 @@ function create-symlink () {
 
 create-symlink ${ZPREZTO_HOME}/runcoms/zlogin ${HOME}/.zlogin
 create-symlink ${ZPREZTO_HOME}/runcoms/zlogout ${HOME}/.zlogout
-create-symlink ${ZPREZTO_HOME}/runcoms/zpreztorc ${HOME}/.zpreztorc
 create-symlink ${ZPREZTO_HOME}/runcoms/zprofile ${HOME}/.zprofile
 create-symlink ${ZPREZTO_HOME}/runcoms/zshenv ${HOME}/.zshenv
 create-symlink ${ZPREZTO_HOME}/runcoms/zshrc ${HOME}/.zshrc
