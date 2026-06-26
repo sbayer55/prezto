@@ -58,7 +58,13 @@ elif [[ -s "/opt/python3/bin/python3" ]]; then
 fi
 
 # Source configuration files
-source_if_exists "${HOME}/.fzf.zsh"
+# fzf shell integration (completion + Ctrl-T/Ctrl-R/Alt-C key bindings).
+# Prefer the built-in `fzf --zsh` (fzf >= 0.48) and fall back to ~/.fzf.zsh.
+if type fzf > /dev/null 2>&1; then
+    eval "$(fzf --zsh)"
+else
+    source_if_exists "${HOME}/.fzf.zsh"
+fi
 source_if_exists "${HOME}/.zprezto/fzf-git.sh"
 
 if [[ -o interactive ]] && [[ -n "$CURSOR_AGENT" ]]; then
@@ -197,6 +203,19 @@ function kind-dev() {
     kubectl config use-context "kind-vertex-dev"
 }
 
+function in-each() {
+  emulate -L zsh
+  setopt local_options null_glob
+  if (( $# == 0 )); then
+    print -u2 "usage: in-each <command> [args...]"
+    return 2
+  fi
+  for dir in */(/); do
+    print -P "%F{cyan}==> ${dir%/}%f"
+    ( cd -- "$dir" && "$@" )
+  done
+}
+
 function kill-all () {
     search_pattern="($(printf "%s|" "$@" | sed 's/|$//'))"
     ps -aux | grep -v grep | grep -iE "${search_pattern}" | awk '{ print $2 }' | xargs kill -9
@@ -271,6 +290,11 @@ export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
     --color=info:#6c7086,prompt:#f38ba8,pointer:#cba6f7
     --color=marker:#79e5d5,spinner:#cdd6f4,header:#a6e3a1
     --color=label:#a6e3a1'
+
+# Trigger for fzf's *native* completion (e.g. `cd **<TAB>`, `kill **<TAB>`).
+# Left as the default `**` on purpose: plain <TAB> is owned by fzf-tab (see
+# below), so emptying this would make both fight over the ^I key binding.
+export FZF_COMPLETION_TRIGGER='**'
 
 # -- Use fd instead of fzf --
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
@@ -450,6 +474,20 @@ bindkey '^[f' forward-word        # Option+Right (iTerm2 "Esc f")
 bindkey '^[[1;3D' backward-word   # Option+Left  (CSI variant)
 bindkey '^[[1;3C' forward-word    # Option+Right (CSI variant)
 
+# Empty Enter: git status in a repo, otherwise ls
+function _empty_enter_accept_line() {
+  if [[ -z $BUFFER ]]; then
+    if git rev-parse --is-inside-work-tree &>/dev/null; then
+      BUFFER="git status -u ."
+    else
+      BUFFER="ls"
+    fi
+  fi
+  zle .accept-line
+}
+zle -N _empty_enter_accept_line
+bindkey '^M' _empty_enter_accept_line
+
 if [[ "${ZSH_DEBUG}" == "true" ]]; then
     zprof
 fi
@@ -464,6 +502,41 @@ fi
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# ---- Completion matching: case-insensitive substring (match anywhere) ----
+# fzf-tab can only fuzzy-filter candidates that zsh's completion system emits,
+# and zsh defaults to prefix-only matching (so `cd ./schedul<TAB>` misses the
+# mid-string `vertex-scheduling-*` dirs).
+#
+# This is intentionally a SINGLE matcher entry, not a progressive list. A list
+# like `'' 'm:...' 'l:|=* r:|=*'` is tried in order and STOPS at the first entry
+# that yields any match -- so as soon as a prefix matched (schedule-app-poc,
+# scheduling) zsh never reached the substring matcher and dropped the rest.
+# Combining case-insensitive (`m:{a-zA-Z}={A-Za-z}`) with match-anywhere
+# (`l:|=* r:|=*`) in one entry makes substring matching always apply, so
+# `schedul` returns schedule-app-poc, scheduling, vertex-scheduling-api and
+# vertex-scheduling-poc together. (cd is aliased to zoxide's `z`, whose path
+# completion delegates to zsh `_files`, which honors this matcher-list.)
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z} l:|=* r:|=*'
+
+# ---- fzf-tab (fzf-powered <TAB> completion menu) ----
+# Replaces zsh's default completion menu with an fzf picker for ALL commands
+# (cd, git, kill, export, ssh, ...). MUST be sourced after compinit and BEFORE
+# widget-wrapping plugins (zsh-autosuggestions / zsh-syntax-highlighting below).
+if [[ -s "${HOME}/.fzf-tab/fzf-tab.plugin.zsh" ]]; then
+    echo "FZF TAB!"
+    # fzf-tab needs the default menu disabled to take over selection.
+    zstyle ':completion:*' menu no
+    # Reuse the FZF_DEFAULT_OPTS theme/keybinds defined in the FZF section.
+    zstyle ':fzf-tab:*' use-fzf-default-opts yes
+    # Jump between completion groups with < and >.
+    zstyle ':fzf-tab:*' switch-group '<' '>'
+    # Directory preview for cd / zoxide using eza, mirroring FZF_ALT_C_OPTS.
+    zstyle ':fzf-tab:complete:(cd|z):*' fzf-preview \
+        'eza --tree --color=always --icons=always "${realpath}" | head -200'
+
+    source "${HOME}/.fzf-tab/fzf-tab.plugin.zsh"
+fi
 
 # ---- Fish-like autosuggestions (ghost text from history; accept with ->) ----
 # Must be sourced before zsh-syntax-highlighting.
