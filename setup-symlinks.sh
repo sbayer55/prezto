@@ -10,6 +10,9 @@ function create-symlink () {
     ln -s "${source_path}" "${target_path}"
 }
 
+create-symlink ${ZPREZTO_HOME}/runcoms/bash_profile ${HOME}/.bash_profile
+create-symlink ${ZPREZTO_HOME}/runcoms/bashrc ${HOME}/.bashrc
+create-symlink ${ZPREZTO_HOME}/runcoms/profile ${HOME}/.profile
 create-symlink ${ZPREZTO_HOME}/runcoms/zlogin ${HOME}/.zlogin
 create-symlink ${ZPREZTO_HOME}/runcoms/zlogout ${HOME}/.zlogout
 create-symlink ${ZPREZTO_HOME}/runcoms/zprofile ${HOME}/.zprofile
