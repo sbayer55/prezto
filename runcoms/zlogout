@@ -5,6 +5,13 @@
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
 
+# Cursor agent shells run `zsh -ilc` for state capture; zlogout stdout after
+# dump_zsh_state breaks Cursor's __CURSOR_ZSH_STATE_END__ parser and leaves
+# dump_zsh_state undefined for every agent command.
+if [[ -n "${CURSOR_AGENT:-}" ]]; then
+  return
+fi
+
 # Print the message.
 cat <<-EOF
 
