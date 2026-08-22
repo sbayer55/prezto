@@ -2,7 +2,7 @@
 *.zwc.old
 modules/*/cache.zsh
 contrib
-runcoms/amazonrc
+runcoms/workrc
 .DS_Store
 */lazy-lock.json
 .idea

@@ -1,4 +1,5 @@
 format = """
+${custom.production_banner}\
 $username\
 $hostname\
 $localip\
@@ -160,6 +161,19 @@ style = "cyan"
 when = 'test -n "$PROFILE" -o -n "$REGION" -o -n "$CTX"'
 command = "true"
 format = "\n"
+
+[custom.production_banner]
+description = "Banner when AWS profile or kubectl context targets prod account 521855441506"
+when = '''
+case "${AWS_PROFILE:-${AWS_DEFAULT_PROFILE:-}}" in *521855441506*) exit 0;; esac
+case "$(kubectl config current-context 2>/dev/null)" in *521855441506*) exit 0;; esac
+exit 1
+'''
+format = """[ +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+
+ |P|r|o|d|u|c|t|i|o|n| |E|n|v|i|r|o|n|m|e|n|t|
+ +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+
+](bold fg:red)\n"""
+shell = ["bash", "--noprofile", "--norc"]
 
 [aws]
 symbol = "󰸏 "

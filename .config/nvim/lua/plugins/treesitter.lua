@@ -1,49 +1,46 @@
--- Treesitter configuration for better syntax highlighting and folding
+-- Treesitter: pin to last commit supporting Neovim 0.11.
+-- main branch requires Neovim 0.12+.
 return {
   "nvim-treesitter/nvim-treesitter",
+  branch = "master",
+  commit = "90cd6580e720caedacb91fdd587b747a6e77d61f",
   build = ":TSUpdate",
   lazy = false,
   priority = 1000,
   config = function()
-    -- Install parsers for these languages
-    local ensure_installed = {
-      "ruby",
-      "lua",
-      "vim",
-      "vimdoc",
-      "python",
+    local languages = {
+      "bash",
+      "css",
+      "html",
       "javascript",
-      "typescript",
       "json",
-      "yaml",
+      "lua",
       "markdown",
       "markdown_inline",
-      "bash",
-      "html",
-      "css",
+      "python",
+      "ruby",
+      "tsx",
+      "typescript",
+      "vim",
+      "vimdoc",
+      "yaml",
     }
 
-    -- Install missing parsers on startup
-    local function ensure_parsers_installed()
-      for _, lang in ipairs(ensure_installed) do
-        local ok = pcall(vim.treesitter.language.inspect, lang)
-        if not ok then
-          pcall(vim.cmd, "TSInstall " .. lang)
-        end
-      end
-    end
+    require("nvim-treesitter").setup({
+      install_dir = vim.fn.stdpath("data") .. "/site",
+    })
 
-    vim.defer_fn(ensure_parsers_installed, 100)
-
-    -- Enable treesitter-based highlighting
     vim.api.nvim_create_autocmd("FileType", {
       callback = function()
         pcall(vim.treesitter.start)
       end,
     })
 
-    -- Set folding to use treesitter
     vim.opt.foldmethod = "expr"
     vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+
+    vim.defer_fn(function()
+      require("nvim-treesitter").install(languages)
+    end, 100)
   end,
 }

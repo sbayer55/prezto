@@ -35,9 +35,17 @@
   defaultBranch = main
 [diff]
   colorMoved = default
+  tool = difftastic
 
 [filter "lfs"]
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
-	clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+  clean = git-lfs clean -- %f
+
+[difftool]
+  prompt = false
+[difftool "difftastic"]
+  cmd = difft \"$LOCAL\" \"$REMOTE\"
+[pager]
+  difftool = true

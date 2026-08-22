@@ -3,30 +3,25 @@ return {
   "rmagatti/auto-session",
   config = function()
     require("auto-session").setup({
-      -- Session save/restore on directory change
       log_level = "error",
-      auto_session_enabled = true,
-      auto_save_enabled = true,
-      auto_restore_enabled = true,
-      auto_session_suppress_dirs = {
+      enabled = true,
+      auto_save = true,
+      auto_restore = true,
+      suppressed_dirs = {
         "~/",
         "~/Downloads",
         "~/Documents",
         "~/Desktop",
         "/",
       },
-      auto_session_use_git_branch = false,
-
-      -- Pre and post hooks
+      git_use_branch_name = false,
       pre_save_cmds = {
-        "NvimTreeClose", -- Close nvim-tree before saving session
+        "NvimTreeClose",
       },
       post_restore_cmds = {},
-
-      -- Session lens (telescope integration)
       session_lens = {
         load_on_setup = true,
-        theme_conf = { border = true },
+        picker_opts = { border = true },
         previewer = false,
       },
     })

@@ -35,22 +35,17 @@ return {
       local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      -- Diagnostic signs
-      local signs = {
-        { name = "DiagnosticSignError", text = "" },
-        { name = "DiagnosticSignWarn", text = "" },
-        { name = "DiagnosticSignHint", text = "" },
-        { name = "DiagnosticSignInfo", text = "" },
-      }
-
-      for _, sign in ipairs(signs) do
-        vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = "" })
-      end
-
       -- Diagnostic configuration
       vim.diagnostic.config({
         virtual_text = true,
-        signs = { active = signs },
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = " ",
+            [vim.diagnostic.severity.WARN] = " ",
+            [vim.diagnostic.severity.HINT] = " ",
+            [vim.diagnostic.severity.INFO] = " ",
+          },
+        },
         update_in_insert = true,
         underline = true,
         severity_sort = true,
@@ -133,7 +128,12 @@ return {
       -- Setup mason-lspconfig with handlers
       require("mason-lspconfig").setup({
         ensure_installed = {
-          "lua_ls",     -- Lua (for Neovim config)
+          "lua_ls", -- Lua (for Neovim config)
+          "vtsls",  -- TypeScript/JavaScript (vertex-ui and similar projects)
+          "jsonls",
+          "html",
+          "cssls",
+          "yamlls",
         },
         automatic_installation = true,
         handlers = {
@@ -205,7 +205,7 @@ return {
           ["<Tab>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
+            elseif luasnip.expandable() or luasnip.jumpable(1) then
               luasnip.expand_or_jump()
             else
               fallback()

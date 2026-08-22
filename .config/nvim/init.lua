@@ -6,6 +6,9 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- Ensure Homebrew tools (tree-sitter, etc.) are on PATH for headless/CLI sessions
+vim.env.PATH = "/opt/homebrew/bin:/usr/local/bin:" .. (vim.env.PATH or "")
+
 -- Basic Settings
 vim.opt.number = true                -- Show line numbers
 vim.opt.relativenumber = true        -- Show relative line numbers
@@ -33,12 +36,15 @@ vim.opt.sidescrolloff = 8            -- Keep 8 columns visible when scrolling
 vim.opt.clipboard = "unnamedplus"    -- Use system clipboard for all yank/delete/put operations
 
 -- Folding settings (using treesitter when available)
-vim.opt.foldmethod = 'expr'          -- Use expression for folding
-vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'  -- Use treesitter for folding
-vim.opt.foldlevel = 99               -- Start with all folds open
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 99          -- Start editing with all folds open
 vim.opt.foldenable = true            -- Enable folding
 vim.opt.foldcolumn = '1'             -- Show fold column
+
+-- Session restore should preserve buffer-local options (filetype, etc.)
+vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 
 -- Enhanced Mouse Settings
 vim.opt.mousemodel = 'popup_setpos'  -- Right-click pops up a menu and sets cursor position
@@ -49,7 +55,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
   callback = function()
-    vim.highlight.on_yank()
+    vim.hl.on_yank()
   end,
 })
 
@@ -80,6 +86,9 @@ require("lazy").setup({
   },
   change_detection = {
     notify = false,
+  },
+  rocks = {
+    hererocks = false,
   },
 })
 
