@@ -2,7 +2,7 @@
 return {
   -- Mason: LSP installer
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     config = function()
       require("mason").setup({
         ui = {
@@ -26,13 +26,12 @@ return {
 
   -- Mason LSP Config Bridge
   {
-    "williamboman/mason-lspconfig.nvim",
+    "mason-org/mason-lspconfig.nvim",
     dependencies = {
-      "williamboman/mason.nvim",
+      "mason-org/mason.nvim",
       "neovim/nvim-lspconfig",
     },
     config = function()
-      local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
       -- Diagnostic configuration
@@ -59,14 +58,20 @@ return {
         },
       })
 
-      -- Hover configuration
-      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-        border = "rounded",
-      })
+      -- Rounded borders on hover/signature popups. vim.lsp.with() is
+      -- deprecated as of Neovim 0.11; 'winborder' covers every float, and the
+      -- per-call opts below keep older Neovim looking the same.
+      if vim.fn.has("nvim-0.11") == 1 then
+        vim.o.winborder = "rounded"
+      else
+        vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+          border = "rounded",
+        })
 
-      vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-        border = "rounded",
-      })
+        vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+          border = "rounded",
+        })
+      end
 
       -- LSP keybindings function
       local on_attach = function(client, bufnr)
@@ -81,9 +86,12 @@ return {
         keymap("n", "gt", vim.lsp.buf.type_definition, vim.tbl_extend("force", opts, { desc = "Go to type definition" }))
 
         -- Information
-        keymap("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "Hover documentation" }))
-        keymap("n", "<C-k>", vim.lsp.buf.signature_help, vim.tbl_extend("force", opts, { desc = "Signature help" }))
-        keymap("i", "<C-k>", vim.lsp.buf.signature_help, vim.tbl_extend("force", opts, { desc = "Signature help (insert)" }))
+        local function hover() vim.lsp.buf.hover({ border = "rounded" }) end
+        local function signature_help() vim.lsp.buf.signature_help({ border = "rounded" }) end
+
+        keymap("n", "K", hover, vim.tbl_extend("force", opts, { desc = "Hover documentation" }))
+        keymap("n", "<C-k>", signature_help, vim.tbl_extend("force", opts, { desc = "Signature help" }))
+        keymap("i", "<C-k>", signature_help, vim.tbl_extend("force", opts, { desc = "Signature help (insert)" }))
 
         -- Actions
         keymap("n", "<leader>rn", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "Rename symbol" }))
@@ -125,47 +133,69 @@ return {
         end
       end
 
-      -- Setup mason-lspconfig with handlers
+      -- mason-lspconfig v2 dropped the `handlers` and `automatic_installation`
+      -- options; server settings now go through vim.lsp.config (Neovim 0.11+)
+      -- and installed servers are enabled automatically.
+      vim.lsp.config("*", {
+        capabilities = capabilities,
+      })
+
+      vim.lsp.config("lua_ls", {
+        settings = {
+          Lua = {
+            diagnostics = {
+              globals = { "vim" },
+            },
+            workspace = {
+              library = vim.api.nvim_get_runtime_file("", true),
+              checkThirdParty = false,
+            },
+            telemetry = {
+              enable = false,
+            },
+          },
+        },
+      })
+
+      vim.lsp.config("pyright", {
+        settings = {
+          python = {
+            analysis = {
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+              diagnosticMode = "openFilesOnly",
+            },
+          },
+        },
+      })
+
+      -- on_attach used to be wired up per server; LspAttach covers every
+      -- client, including jdtls, which ftplugin/java.lua starts by hand.
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("lsp_attach_keymaps", { clear = true }),
+        callback = function(event)
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+          if client then
+            on_attach(client, event.buf)
+          end
+        end,
+      })
+
       require("mason-lspconfig").setup({
         ensure_installed = {
-          "lua_ls", -- Lua (for Neovim config)
-          "vtsls",  -- TypeScript/JavaScript (vertex-ui and similar projects)
+          "lua_ls",   -- Lua (for Neovim config)
+          "vtsls",    -- TypeScript/JavaScript (vertex-ui and similar projects)
           "jsonls",
           "html",
           "cssls",
           "yamlls",
+          "pyright",  -- Python
+          "jdtls",    -- Java; started by ftplugin/java.lua, not by lspconfig
         },
-        automatic_installation = true,
-        handlers = {
-          -- Default handler for all servers
-          function(server_name)
-            lspconfig[server_name].setup({
-              capabilities = capabilities,
-              on_attach = on_attach,
-            })
-          end,
-
-          -- Custom handler for lua_ls
-          ["lua_ls"] = function()
-            lspconfig.lua_ls.setup({
-              capabilities = capabilities,
-              on_attach = on_attach,
-              settings = {
-                Lua = {
-                  diagnostics = {
-                    globals = { "vim" },
-                  },
-                  workspace = {
-                    library = vim.api.nvim_get_runtime_file("", true),
-                    checkThirdParty = false,
-                  },
-                  telemetry = {
-                    enable = false,
-                  },
-                },
-              },
-            })
-          end,
+        -- jdtls needs the project-specific launch config in ftplugin/java.lua,
+        -- so keep mason-lspconfig from starting a second, unconfigured client.
+        automatic_enable = {
+          exclude = { "jdtls" },
         },
       })
     end,

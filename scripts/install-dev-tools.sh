@@ -25,10 +25,111 @@ readonly PACKAGES=(
   "bottom:Graphical process/system monitor similar to top"
   "atuin:Magical shell history"
   "zsh-autosuggestions:Fish-like autosuggestions for zsh"
+  # Runtimes the Neovim config needs: Mason installs most of its language
+  # servers with npm, pyright needs Node too, and jdtls needs a JDK.
+  "node:JavaScript runtime required by Mason language servers"
+  "npm:Node package manager used by Mason"
+  "python:Python 3 interpreter used by Python tooling"
+  "openjdk:Java Development Kit required by the jdtls language server"
+  "unzip:Archive extractor used by Mason package installs"
+  "awscli:Amazon Web Services command line interface (v2)"
+  "uv:Fast Python package and project manager"
 )
 
-# Package name mappings for different package managers
-# No mappings - using same package names across all package managers
+# Package name mappings for different package managers.
+# The PACKAGES list above uses Homebrew names; only the differences are listed.
+map_package_name() {
+  local manager="$1" package="$2"
+
+  case "$manager" in
+    apt)
+      case "$package" in
+        midnight-commander) echo "mc" ;;
+        fd)                 echo "fd-find" ;;
+        node)               echo "nodejs" ;;
+        python)             echo "python3" ;;
+        openjdk)            echo "default-jdk" ;;
+        # Debian/Ubuntu only package awscli v1; ensure_awscli installs v2.
+        awscli)             echo "awscli" ;;
+        *)                  echo "$package" ;;
+      esac
+      ;;
+    dnf)
+      case "$package" in
+        midnight-commander) echo "mc" ;;
+        fd)                 echo "fd-find" ;;
+        gnupg)              echo "gnupg2" ;;
+        node)               echo "nodejs" ;;
+        python)             echo "python3" ;;
+        openjdk)            echo "java-devel" ;;
+        awscli)             echo "awscli2" ;;
+        *)                  echo "$package" ;;
+      esac
+      ;;
+    pacman)
+      case "$package" in
+        midnight-commander) echo "mc" ;;
+        node)               echo "nodejs" ;;
+        openjdk)            echo "jdk-openjdk" ;;
+        awscli)             echo "aws-cli-v2" ;;
+        *)                  echo "$package" ;;
+      esac
+      ;;
+    zypper)
+      case "$package" in
+        midnight-commander) echo "mc" ;;
+        node)               echo "nodejs" ;;
+        python)             echo "python3" ;;
+        openjdk)            echo "java-devel" ;;
+        awscli)             echo "aws-cli" ;;
+        *)                  echo "$package" ;;
+      esac
+      ;;
+    apk)
+      case "$package" in
+        midnight-commander) echo "mc" ;;
+        node)               echo "nodejs" ;;
+        python)             echo "python3" ;;
+        openjdk)            echo "openjdk21" ;;
+        awscli)             echo "aws-cli" ;;
+        *)                  echo "$package" ;;
+      esac
+      ;;
+    brew)
+      case "$package" in
+        # The node formula ships npm; there is no separate npm formula.
+        npm)     echo "node" ;;
+        openjdk) echo "openjdk@21" ;;
+        *)       echo "$package" ;;
+      esac
+      ;;
+    *)
+      echo "$package"
+      ;;
+  esac
+}
+
+# Debian and Fedora ship fd and bat under different binary names to avoid
+# clashes; the shell config in this repo calls them fd and bat.
+link_renamed_binaries() {
+  local bin_dir="${HOME}/.local/bin"
+  local shimmed=()
+
+  mkdir -p "$bin_dir"
+
+  if ! command_exists fd && command_exists fdfind; then
+    ln -sf "$(command -v fdfind)" "${bin_dir}/fd"
+    shimmed+=("fd -> fdfind")
+  fi
+  if ! command_exists bat && command_exists batcat; then
+    ln -sf "$(command -v batcat)" "${bin_dir}/bat"
+    shimmed+=("bat -> batcat")
+  fi
+
+  if ((${#shimmed[@]} > 0)); then
+    echo -e "${BLUE}Linked in ${bin_dir}: ${shimmed[*]}${NC}"
+  fi
+}
 
 # Set colors for better readability
 readonly GREEN='\033[0;32m'
@@ -75,7 +176,9 @@ detect_package_managers() {
     available_managers+=("apk:APK (Alpine Linux)")
   fi
   
-  echo "${available_managers[@]}"
+  if ((${#available_managers[@]} > 0)); then
+    printf '%s\n' "${available_managers[@]}"
+  fi
 }
 
 # Function to install with Homebrew
@@ -95,6 +198,7 @@ install_with_brew() {
   
   for package_info in "${PACKAGES[@]}"; do
     local package_name="${package_info%%:*}"
+    package_name="$(map_package_name brew "$package_name")"
     
     echo -e "\n${YELLOW}Processing $package_name...${NC}"
     
@@ -167,7 +271,7 @@ install_with_cargo() {
     
     if ((${#skipped_packages[@]} > 0)); then
       echo -e "${CYAN}Skipped packages: ${skipped_packages[*]}${NC}"
-    }
+    fi
     
     if ((${#failed_packages[@]} > 0)); then
       echo -e "${RED}Failed installations: ${#failed_packages[@]}${NC}"
@@ -192,6 +296,7 @@ install_with_native() {
       
       for package_info in "${PACKAGES[@]}"; do
         local package_name="${package_info%%:*}"
+        package_name="$(map_package_name "$package_manager" "$package_name")"
         
         # Check if already installed
         if dpkg -l | grep -q "^ii.*$package_name "; then
@@ -219,6 +324,7 @@ install_with_native() {
       
       for package_info in "${PACKAGES[@]}"; do
         local package_name="${package_info%%:*}"
+        package_name="$(map_package_name "$package_manager" "$package_name")"
         
         echo -e "\n${YELLOW}Installing $package_name with dnf...${NC}"
         if sudo dnf install -y "$package_name"; then
@@ -237,6 +343,7 @@ install_with_native() {
       
       for package_info in "${PACKAGES[@]}"; do
         local package_name="${package_info%%:*}"
+        package_name="$(map_package_name "$package_manager" "$package_name")"
         
         echo -e "\n${YELLOW}Installing $package_name with pacman...${NC}"
         if sudo pacman -S --needed --noconfirm "$package_name"; then
@@ -255,6 +362,7 @@ install_with_native() {
       
       for package_info in "${PACKAGES[@]}"; do
         local package_name="${package_info%%:*}"
+        package_name="$(map_package_name "$package_manager" "$package_name")"
         
         echo -e "\n${YELLOW}Installing $package_name with zypper...${NC}"
         if sudo zypper install -y "$package_name"; then
@@ -273,6 +381,7 @@ install_with_native() {
       
       for package_info in "${PACKAGES[@]}"; do
         local package_name="${package_info%%:*}"
+        package_name="$(map_package_name "$package_manager" "$package_name")"
         
         echo -e "\n${YELLOW}Installing $package_name with apk...${NC}"
         if sudo apk add "$package_name"; then
@@ -286,6 +395,8 @@ install_with_native() {
       ;;
   esac
   
+  link_renamed_binaries
+
   echo -e "\n${GREEN}Installation with $package_manager completed.${NC}"
   echo -e "${BLUE}Total packages processed: ${#PACKAGES[@]}${NC}"
   echo -e "${GREEN}Successfully installed: $success_count${NC}"
@@ -307,6 +418,166 @@ install_with_native() {
     else
       echo -e "${BLUE}Skipping Cargo fallback installation.${NC}"
     fi
+  fi
+}
+
+# The Neovim config in this repo needs 0.11 (vim.hl.on_yank, treesitter
+# foldexpr, the vim.lsp.config era). Several distros still ship 0.9/0.10, so
+# fall back to the official release tarball when the package is too old.
+readonly NVIM_MIN_MAJOR=0
+readonly NVIM_MIN_MINOR=11
+
+neovim_is_recent() {
+  command_exists nvim || return 1
+
+  local version major minor
+  version="$(nvim --version 2>/dev/null | head -1 | sed -E 's/^NVIM v?//; s/[^0-9.].*$//')"
+  [[ -n "$version" ]] || return 1
+
+  major="${version%%.*}"
+  minor="${version#*.}"
+  minor="${minor%%.*}"
+
+  ((major > NVIM_MIN_MAJOR)) && return 0
+  ((major == NVIM_MIN_MAJOR && minor >= NVIM_MIN_MINOR))
+}
+
+install_neovim_from_release() {
+  local arch tarball url
+
+  case "$(uname -s)-$(uname -m)" in
+    Linux-x86_64)        arch="linux-x86_64" ;;
+    Linux-aarch64|Linux-arm64) arch="linux-arm64" ;;
+    *)
+      echo -e "${YELLOW}No official Neovim tarball for $(uname -s)/$(uname -m); skipping.${NC}"
+      return 1
+      ;;
+  esac
+
+  tarball="nvim-${arch}.tar.gz"
+  url="https://github.com/neovim/neovim/releases/download/stable/${tarball}"
+
+  echo -e "${BLUE}Downloading ${url}...${NC}"
+  if ! curl -fsSL -o "/tmp/${tarball}" "$url"; then
+    echo -e "${RED}Failed to download Neovim from ${url}.${NC}"
+    return 1
+  fi
+
+  sudo rm -rf "/opt/nvim-${arch}"
+  if ! sudo tar -C /opt -xzf "/tmp/${tarball}"; then
+    echo -e "${RED}Failed to unpack ${tarball}.${NC}"
+    rm -f "/tmp/${tarball}"
+    return 1
+  fi
+  rm -f "/tmp/${tarball}"
+
+  sudo ln -sf "/opt/nvim-${arch}/bin/nvim" /usr/local/bin/nvim
+  hash -r
+  echo -e "${GREEN}Installed $(nvim --version | head -1) to /opt/nvim-${arch}.${NC}"
+}
+
+# Make sure whatever the package manager gave us is new enough for the config.
+ensure_recent_neovim() {
+  if neovim_is_recent; then
+    echo -e "${GREEN}$(nvim --version | head -1) is new enough for this config.${NC}"
+    return 0
+  fi
+
+  if command_exists nvim; then
+    echo -e "\n${YELLOW}$(nvim --version | head -1) is older than the ${NVIM_MIN_MAJOR}.${NVIM_MIN_MINOR} this config requires.${NC}"
+  else
+    echo -e "\n${YELLOW}Neovim is not installed.${NC}"
+  fi
+  echo -e "${YELLOW}Install the official Neovim release build? [Y/n]${NC}"
+  read -r INSTALL_NVIM
+
+  if [[ -z "$INSTALL_NVIM" || "$INSTALL_NVIM" =~ ^[Yy]$ ]]; then
+    install_neovim_from_release
+  else
+    echo -e "${BLUE}Leaving Neovim as is; ~/.config/nvim will not work correctly.${NC}"
+  fi
+}
+
+# Not every distro packages the AWS CLI v2 (Debian and Ubuntu ship only the
+# deprecated v1), so fall back to Amazon's official installer.
+ensure_awscli() {
+  if command_exists aws; then
+    echo -e "${GREEN}$(aws --version 2>&1 | head -1) is installed.${NC}"
+    return 0
+  fi
+
+  local os arch url
+  os="$(uname -s)"
+
+  if [[ "$os" == "Darwin" ]]; then
+    echo -e "${BLUE}Installing the AWS CLI v2 from awscli.amazonaws.com...${NC}"
+    if curl -fsSL "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o /tmp/AWSCLIV2.pkg; then
+      sudo installer -pkg /tmp/AWSCLIV2.pkg -target /
+      rm -f /tmp/AWSCLIV2.pkg
+    else
+      echo -e "${RED}Failed to download the AWS CLI installer.${NC}"
+      return 1
+    fi
+  else
+    case "$(uname -m)" in
+      x86_64)          arch="x86_64" ;;
+      aarch64|arm64)   arch="aarch64" ;;
+      *)
+        echo -e "${YELLOW}No official AWS CLI build for $(uname -m); skipping.${NC}"
+        return 1
+        ;;
+    esac
+
+    url="https://awscli.amazonaws.com/awscli-exe-linux-${arch}.zip"
+    echo -e "${BLUE}Installing the AWS CLI v2 from ${url}...${NC}"
+
+    if ! command_exists unzip; then
+      echo -e "${RED}unzip is required to install the AWS CLI; skipping.${NC}"
+      return 1
+    fi
+    if ! curl -fsSL "$url" -o /tmp/awscliv2.zip; then
+      echo -e "${RED}Failed to download the AWS CLI from ${url}.${NC}"
+      return 1
+    fi
+
+    rm -rf /tmp/aws
+    unzip -q -o /tmp/awscliv2.zip -d /tmp
+    sudo /tmp/aws/install --update
+    rm -rf /tmp/aws /tmp/awscliv2.zip
+  fi
+
+  hash -r
+  if command_exists aws; then
+    echo -e "${GREEN}Installed $(aws --version 2>&1 | head -1).${NC}"
+  else
+    echo -e "${RED}The AWS CLI is still not on PATH.${NC}"
+    return 1
+  fi
+}
+
+# uv is not in every distro's repositories yet; astral.sh publishes an
+# installer that drops it in ~/.local/bin.
+ensure_uv() {
+  if command_exists uv; then
+    echo -e "${GREEN}$(uv --version 2>&1 | head -1) is installed.${NC}"
+    return 0
+  fi
+
+  echo -e "${BLUE}Installing uv from astral.sh...${NC}"
+  if ! curl -LsSf https://astral.sh/uv/install.sh | sh; then
+    echo -e "${RED}Failed to install uv.${NC}"
+    return 1
+  fi
+
+  # The installer targets ~/.local/bin, which the zshrc adds to PATH.
+  export PATH="${HOME}/.local/bin:${PATH}"
+  hash -r
+
+  if command_exists uv; then
+    echo -e "${GREEN}Installed $(uv --version 2>&1 | head -1).${NC}"
+  else
+    echo -e "${RED}uv is still not on PATH.${NC}"
+    return 1
   fi
 }
 
@@ -413,6 +684,25 @@ ${CYAN}Usage:${NC}
 EOF
     )"
     
+    ["awscli"]="$(cat << EOF
+${YELLOW}awscli (AWS command line interface):${NC}
+${CYAN}Usage examples:${NC}
+  aws configure sso          ${BLUE}# Set up SSO credentials${NC}
+  aws s3 ls                  ${BLUE}# List S3 buckets${NC}
+  aws sts get-caller-identity ${BLUE}# Show the current identity${NC}
+EOF
+    )"
+
+    ["uv"]="$(cat << EOF
+${YELLOW}uv (Python package and project manager):${NC}
+${CYAN}Usage examples:${NC}
+  uv venv                    ${BLUE}# Create a virtual environment${NC}
+  uv pip install -r reqs.txt ${BLUE}# Install dependencies (pip compatible)${NC}
+  uv run script.py           ${BLUE}# Run a script in a managed environment${NC}
+  uv tool install ruff       ${BLUE}# Install a CLI tool globally${NC}
+EOF
+    )"
+
     ["zsh-autosuggestions"]="$(cat << EOF
 ${YELLOW}zsh-autosuggestions:${NC}
 ${CYAN}Add to your ~/.zshrc:${NC}
@@ -426,8 +716,10 @@ EOF
   # Display tips for commonly installed tools
   echo -e "\n${BLUE}===== Tool Usage Tips =====${NC}"
   
-  for tool in eza bat neovim fzf ripgrep zoxide atuin git-delta fd midnight-commander zsh-autosuggestions; do
-    if command_exists "$tool" || [[ "$tool" == "zsh-autosuggestions" ]]; then
+  for tool in eza bat neovim fzf ripgrep zoxide atuin git-delta fd midnight-commander awscli uv zsh-autosuggestions; do
+    binary="$tool"
+    [[ "$tool" == "awscli" ]] && binary="aws"
+    if command_exists "$binary" || [[ "$tool" == "zsh-autosuggestions" ]]; then
       echo -e "\n${TOOL_TIPS[$tool]}"
     fi
   done
@@ -438,7 +730,7 @@ EOF
 # Main script
 
 # Detect available package managers
-available_managers=($(detect_package_managers))
+available_managers=(${(f)"$(detect_package_managers)"})
 
 if ((${#available_managers[@]} == 0)); then
   echo -e "${RED}No supported package managers found.${NC}"
@@ -448,11 +740,11 @@ fi
 
 # Display available package managers
 echo -e "${BLUE}Available package managers:${NC}"
-for i in "${!available_managers[@]}"; do
+for i in {1..${#available_managers[@]}}; do
   manager_info="${available_managers[$i]}"
   manager_name="${manager_info%%:*}"
   manager_desc="${manager_info#*:}"
-  echo -e "${CYAN}[$((i+1))] $manager_name${NC}: $manager_desc"
+  echo -e "${CYAN}[$i] $manager_name${NC}: $manager_desc"
 done
 
 # Ask user to select a package manager
@@ -465,7 +757,7 @@ if [ -z "${MANAGER_CHOICE##*[!0-9]*}" ] || [ "$MANAGER_CHOICE" -lt 1 ] || [ "$MA
 fi
 
 # Get selected package manager
-selected_manager="${available_managers[$((MANAGER_CHOICE-1))]}"
+selected_manager="${available_managers[$MANAGER_CHOICE]}"
 manager_name="${selected_manager%%:*}"
 manager_desc="${selected_manager#*:}"
 
@@ -506,7 +798,14 @@ if [[ -z "$INSTALL_TOOLS" || "$INSTALL_TOOLS" =~ ^[Yy]$ ]]; then
       exit 1
       ;;
   esac
-  
+
+  # The bundled Neovim config needs a recent Neovim, which not every distro has.
+  ensure_recent_neovim
+
+  # Neither of these is packaged everywhere; fall back to the vendor installers.
+  ensure_awscli
+  ensure_uv
+
   # Display usage tips
   display_usage_tips
 else

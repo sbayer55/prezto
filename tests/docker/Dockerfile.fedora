@@ -1,0 +1,16 @@
+# Fedora test image for the zprezto setup scripts. See Dockerfile.ubuntu.
+ARG BASE_IMAGE=fedora:latest
+FROM ${BASE_IMAGE}
+
+ENV LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
+
+RUN dnf -y install \
+      bash zsh git curl wget ca-certificates sudo \
+      tar gzip unzip xz \
+      gcc make \
+      file findutils procps-ng less which glibc-langpack-en \
+ && dnf clean all
+
+WORKDIR /root
+CMD ["/bin/bash"]

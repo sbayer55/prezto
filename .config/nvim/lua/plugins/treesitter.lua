@@ -1,8 +1,8 @@
--- Treesitter: pin to last commit supporting Neovim 0.11.
--- main branch requires Neovim 0.12+.
+-- Treesitter: pinned to the last main-branch commit that supports Neovim 0.11.
+-- The master branch is archived and has a completely different API.
 return {
   "nvim-treesitter/nvim-treesitter",
-  branch = "master",
+  branch = "main",
   commit = "90cd6580e720caedacb91fdd587b747a6e77d61f",
   build = ":TSUpdate",
   lazy = false,

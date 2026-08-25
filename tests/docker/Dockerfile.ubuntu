@@ -1,0 +1,22 @@
+# Ubuntu test image for the zprezto setup scripts.
+#
+# Only bootstrap tooling is installed here (a shell, git, a compiler, ...).
+# Everything the repo is supposed to install is deliberately left out so the
+# test suite exercises scripts/install-dev-tools.sh for real.
+ARG BASE_IMAGE=ubuntu:24.04
+FROM ${BASE_IMAGE}
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      bash zsh git curl wget ca-certificates sudo \
+      tar gzip unzip xz-utils \
+      gcc make \
+      file findutils procps less \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root
+CMD ["/bin/bash"]

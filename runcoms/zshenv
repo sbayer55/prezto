@@ -9,4 +9,7 @@
 if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
-. "$HOME/.cargo/env"
+# Rust toolchain, when rustup has been run on this machine.
+if [[ -s "${HOME}/.cargo/env" ]]; then
+  . "${HOME}/.cargo/env"
+fi

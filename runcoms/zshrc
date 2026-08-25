@@ -215,9 +215,12 @@ fi
 # source_if_exists "${HOME}/.rvm/scripts/rvm"
 
 # ---- zoxide -----
-eval "$(zoxide init zsh)"
-alias cd='z'
-alias cdi='zi'
+# `cd` is aliased to zoxide, so only do it when zoxide is actually installed.
+if type zoxide > /dev/null 2>&1; then
+    eval "$(zoxide init zsh)"
+    alias cd='z'
+    alias cdi='zi'
+fi
 
 # ---- FZF -----
 

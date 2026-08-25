@@ -1,0 +1,24 @@
+# Arch Linux test image for the zprezto setup scripts. See Dockerfile.ubuntu.
+#
+# archlinux:base is x86_64 only; on arm64 hosts the driver script passes an
+# Arch Linux ARM base image instead.
+ARG BASE_IMAGE=archlinux:base
+FROM ${BASE_IMAGE}
+
+ENV LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
+
+# pacman 7 sandboxes downloads with Landlock, which Docker's default seccomp
+# profile blocks. Disable it repo-wide so pacman also works when the setup
+# scripts call it later during the test run.
+RUN sed -i 's/^\[options\]/[options]\nDisableSandbox/' /etc/pacman.conf
+
+RUN pacman -Sy --noconfirm --needed \
+      bash zsh git curl wget sudo \
+      tar gzip unzip \
+      gcc make \
+      file findutils procps-ng less which \
+ && pacman -Scc --noconfirm
+
+WORKDIR /root
+CMD ["/bin/bash"]

@@ -90,6 +90,21 @@ accompanying README files to learn of what is available.
      zstyle ':prezto:load' pmodule-dirs $HOME/.zprezto-contrib
      ```
 
+Testing
+-------
+
+The setup scripts and the Neovim config can be exercised on a clean Arch,
+Ubuntu and Fedora system with Docker:
+
+```console
+./tests/run-docker-tests.sh              # all three distros (default)
+./tests/run-docker-tests.sh arch         # a single distro
+./tests/run-docker-tests.sh --quick      # fast structural checks only
+./tests/run-docker-tests.sh --full arch  # also runs setup.sh end to end
+```
+
+See [tests/README.md](tests/README.md) for the details.
+
 Customization
 -------------
 
