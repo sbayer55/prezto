@@ -154,7 +154,7 @@ style = "red"
 [env_var.CTX]
 variable = "CTX"
 symbol = "⎈ "
-format = "[$symbol$env_value]($style) "
+format = "CTX=[$symbol$env_value]($style) "
 style = "cyan"
 
 [custom.cloud_context_break]
@@ -169,10 +169,8 @@ case "${AWS_PROFILE:-${AWS_DEFAULT_PROFILE:-}}" in *521855441506*) exit 0;; esac
 case "$(kubectl config current-context 2>/dev/null)" in *521855441506*) exit 0;; esac
 exit 1
 '''
-format = """[ +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+
- |P|r|o|d|u|c|t|i|o|n| |E|n|v|i|r|o|n|m|e|n|t|
- +-+-+-+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+-+-+-+-+
-](bold fg:red)\n"""
+format = """[# Production Environment](bold fg:white bg:red)
+"""
 shell = ["bash", "--noprofile", "--norc"]
 
 [aws]

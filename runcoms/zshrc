@@ -49,6 +49,7 @@ add_to_path "${HOME}/apache-maven-3.9.6/bin"
 add_to_path "${HOME}/.local/bin"
 add_to_path "${HOME}/Applications/quarto/bin"
 add_to_path "${JAVA_HOME}/bin"
+add_to_path "${HOME}/.opencode/bin"
 
 # Python path handling
 if [[ -s "/opt/homebrew/opt/python@3.12/bin" ]]; then
@@ -69,12 +70,12 @@ source_if_exists "${HOME}/.zprezto/fzf-git.sh"
 
 source_if_exists "${HOME}/.zprezto/runcoms/workrc"
 
-if [[ -o interactive ]] && [[ -n "$CURSOR_AGENT" ]]; then
+if [[ -o interactive ]] && [[ -n "${CURSOR_AGENT:-}" ]]; then
     source_if_exists "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
+if [[ -n "${SSH_CONNECTION:-}" ]]; then
   export EDITOR='vim'
   export VISUAL='vim'
 else
@@ -478,5 +479,57 @@ source_if_exists "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zs
 # ---- Command-line syntax highlighting (must be sourced LAST) ----
 source_if_exists "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
-# opencode
-export PATH=/Users/stevenbayer/.opencode/bin:$PATH
+function kill-port() {
+    emulate -L zsh
+
+    local port="${1:-}"
+    local reply
+    local -a pids
+
+    if (( ! $+commands[lsof] )); then
+        echo "Error: lsof is required but was not found."
+        return 127
+    fi
+
+    if [[ "${port}" != <-> ]] || (( port < 1 || port > 65535 )); then
+        echo "Usage: kill-port <port>"
+        echo "Example: kill-port 3000"
+        return 2
+    fi
+
+    # Find TCP listeners and UDP processes bound to the port.
+    pids=(
+        ${(fu)"$(
+            {
+                lsof -nP -tiTCP:"${port}" -sTCP:LISTEN
+                lsof -nP -tiUDP:"${port}"
+            } 2>/dev/null
+        )"}
+    )
+
+    if (( ${#pids} == 0 )); then
+        echo "No process is listening on port ${port}."
+        return 0
+    fi
+
+    echo "The following process(es) are using port ${port}:"
+    ps -p "${(j:,:)pids}" -o pid=,user=,command=
+    echo
+
+    read -r "reply?Kill ${#pids} process(es) with SIGTERM? [y/N] "
+
+    case "${reply:l}" in
+        y|yes)
+            if kill -TERM "${pids[@]}"; then
+                echo "Sent SIGTERM to PID(s): ${(j:, :)pids}"
+            else
+                echo "Failed to terminate one or more processes."
+                return 1
+            fi
+            ;;
+        *)
+            echo "Cancelled."
+            return 1
+            ;;
+    esac
+}
