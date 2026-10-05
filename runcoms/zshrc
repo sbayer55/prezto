@@ -58,6 +58,9 @@ elif [[ -s "/opt/python3/bin/python3" ]]; then
     add_to_path "/opt/python3/bin"
 fi
 
+autoload -Uz compinit && compinit
+autoload -Uz bashcompinit && bashcompinit
+
 # Source configuration files
 # fzf shell integration (completion + Ctrl-T/Ctrl-R/Alt-C key bindings).
 # Prefer the built-in `fzf --zsh` (fzf >= 0.48) and fall back to ~/.fzf.zsh.
@@ -186,13 +189,10 @@ function tmux-tail () {
 alias "dc"="docker-compose"
 alias "rm-images"="docker images | awk 'NR!=1' | awk '{ print \$3 }' | xargs docker image rm"
 
+
 if [[ -s "/usr/local/aws-cli/v2/current/bin" ]]; then
-    autoload bashcompinit && bashcompinit
-    autoload -Uz compinit && compinit
     complete -C '/usr/local/aws-cli/v2/current/bin' aws
 elif [[ -s "/usr/local/aws-cli" ]]; then
-    autoload bashcompinit && bashcompinit
-    autoload -Uz compinit && compinit
     complete -C '/usr/local/aws-cli/bin' aws
 fi
 
@@ -315,7 +315,6 @@ alias lt="${eza_cmd} --color-scale-mode=gradient --color-scale=age --no-time --t
 # ---- Jump -----
 
 [[ -s "${HOME}/.autojump/etc/profile.d/autojump.sh" ]] && source "${HOME}/.autojump/etc/profile.d/autojump.sh"
-autoload -U compinit && compinit -u
 
 # ---- atuin -----
 
@@ -331,10 +330,6 @@ fi
 # Maybe delete for Q?
 if type "pipx" > /dev/null && type "register-python-argcomplete" > /dev/null
 then
-    autoload -U compinit && compinit
-    # I might not need this:
-    # autoload -U bashcompinit
-    # bashcompinit
     eval "$(register-python-argcomplete pipx)"
 fi
 
